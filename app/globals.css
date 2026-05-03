@@ -1,0 +1,192 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ================= ROOT VARIABLES ================= */
+
+:root {
+  --background: oklch(0.98 0.01 240);
+  --foreground: oklch(0.2 0.05 240);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.65 0.2 265);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.93 0.01 240);
+  --muted-foreground: oklch(0.54 0.05 240);
+  --accent: oklch(0.65 0.2 265);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.577 0.245 27.325);
+  --border: oklch(0.92 0.01 240);
+  --input: oklch(0.97 0 0);
+  --ring: oklch(0.65 0.2 265);
+  --chart-1: oklch(0.65 0.2 265);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+}
+
+/* ================= DARK MODE ================= */
+
+.dark {
+  --background: oklch(0.12 0.02 240);
+  --foreground: oklch(0.95 0.01 240);
+  --card: oklch(0.18 0.02 240);
+  --card-foreground: oklch(0.95 0.01 240);
+  --popover: oklch(0.18 0.02 240);
+  --popover-foreground: oklch(0.95 0.01 240);
+}
+
+/* ================= THEME ================= */
+
+@theme inline {
+  --font-sans: "Geist", "Geist Fallback";
+  --font-mono: "Geist Mono", "Geist Mono Fallback";
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-border: var(--border);
+}
+
+
+/* ================= BASE ================= */
+
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* ================= ROOT VARIABLES ================= */
+
+:root {
+  --background: #FAEBD7;
+  --foreground: #1f2937;
+}
+
+/* ================= BASE ================= */
+
+@layer base {
+  body {
+    background: var(--background);
+    color: var(--foreground);
+  }
+}
+
+/* ===================================================== */
+/* ✅ WORKING ANIMATED TEXT */
+/* ===================================================== */
+
+/* Header */
+.hero-header {
+  height: 120px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Animated text */
+.animated-title {
+  font-size: 3rem;
+  font-weight: bold;
+
+  background: linear-gradient(90deg,
+      #ff00cc,
+      #3333ff,
+      #00ffff,
+      #ff00cc);
+
+  background-size: 200% auto;
+
+  /* 🔥 MUST HAVE */
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  animation: gradientMove 3s linear infinite;
+}
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% center;
+  }
+
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.animated-title {
+  color: red;
+}
+
+.animated-title:hover {
+  animation-play-state: paused;
+}
+
+/* ===================================================== */
+/* 🎨 CUSTOM SCROLLBAR STYLING */
+/* ===================================================== */
+
+.scrollable-dropdown {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.scrollable-dropdown::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollable-dropdown::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.scrollable-dropdown::-webkit-scrollbar-thumb {
+  background: rgba(147, 51, 234, 0.6);
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.scrollable-dropdown::-webkit-scrollbar-thumb:hover {
+  background: rgba(147, 51, 234, 0.9);
+}
+
+/* ===================================================== */
+/* 📜 PAGE SCROLLBAR STYLING */
+/* ===================================================== */
+
+.scrollbar-style {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(147, 51, 234, 0.6) rgba(255, 255, 255, 0.1);
+}
+
+.scrollbar-style::-webkit-scrollbar {
+  width: 10px;
+}
+
+.scrollbar-style::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.scrollbar-style::-webkit-scrollbar-thumb {
+  background: rgba(147, 51, 234, 0.6);
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.scrollbar-style::-webkit-scrollbar-thumb:hover {
+  background: rgba(147, 51, 234, 0.9);
+}
