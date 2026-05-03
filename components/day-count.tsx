@@ -28,6 +28,8 @@ export default function DayCount() {
     totalYears: number;
     remainingDaysAfterYears: number;
     totalHours: number;
+    totalMinutes: number;
+    totalSeconds: number;
   } | null>(null)
   const [isStartDateTodayChecked, setIsStartDateTodayChecked] = useState<boolean>(false)
   const [isEndDateTodayChecked, setIsEndDateTodayChecked] = useState<boolean>(false)
@@ -447,6 +449,8 @@ export default function DayCount() {
         const remainingDaysAfterYears = Math.floor(diffTimeYears / (1000 * 60 * 60 * 24)) + (includeEndDate ? 1 : 0)
         
         const totalHours = finalCount * 24
+        const totalMinutes = totalHours * 60
+        const totalSeconds = totalMinutes * 60
 
         setExtraResults({
           totalWeeks,
@@ -455,7 +459,9 @@ export default function DayCount() {
           remainingDaysAfterMonths,
           totalYears: difference.years,
           remainingDaysAfterYears: remainingDaysAfterYears,
-          totalHours
+          totalHours,
+          totalMinutes,
+          totalSeconds
         })
       }
     } else {
@@ -655,14 +661,14 @@ export default function DayCount() {
           </div>
 
           {/* Checkbox for include end date */}
-          <div className="flex items-center space-x-3 backdrop-blur-md bg-white/20 p-4 rounded-lg border border-white/40">
+          <div className="flex items-center justify-start gap-2 w-fit">
             <Checkbox
               id="include-end-date"
               checked={includeEndDate}
               onCheckedChange={(checked) => setIncludeEndDate(checked as boolean)}
-              className="w-5 h-5 cursor-pointer border border-white/60"
+              className="w-4 h-4 cursor-pointer border-white"
             />
-            <label htmlFor="include-end-date" className="text-sm font-medium text-white cursor-pointer">
+            <label htmlFor="include-end-date" className="text-xs text-white font-medium cursor-pointer select-none">
               {includeEndDate
                 ? "Counting: Start date to End date (inclusive)"
                 : "Counting: Start date to End date"}
@@ -717,9 +723,17 @@ export default function DayCount() {
                       {extraResults.totalYears} <span className="text-xs font-normal text-cyan-400/70">y</span> {extraResults.remainingDaysAfterYears} <span className="text-xs font-normal text-cyan-400/70">d</span>
                     </p>
                   </div>
-                  <div className="col-span-2 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-3 rounded-lg border border-slate-700">
+                  <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-3 rounded-lg border border-slate-700">
                     <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-1 text-center">Total Hours</p>
                     <p className="text-lg font-bold text-cyan-500 text-center">{extraResults.totalHours.toLocaleString()}</p>
+                  </div>
+                  <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-3 rounded-lg border border-slate-700">
+                    <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-1 text-center">Total Minutes</p>
+                    <p className="text-lg font-bold text-cyan-500 text-center">{extraResults.totalMinutes.toLocaleString()}</p>
+                  </div>
+                  <div className="col-span-2 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-3 rounded-lg border border-slate-700">
+                    <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-1 text-center">Total Seconds</p>
+                    <p className="text-lg font-bold text-cyan-500 text-center">{extraResults.totalSeconds.toLocaleString()}</p>
                   </div>
                 </div>
               )}
@@ -727,12 +741,14 @@ export default function DayCount() {
           )}
 
           {/* Clear Button */}
-          <Button
-            onClick={handleClear}
-            className="w-full backdrop-blur-md bg-red-500/30 hover:bg-red-500/50 text-white font-semibold py-3 rounded-lg transition hover:cursor-pointer transition-all hover:shadow-lg hover:shadow-red-600 border border-red-500/60 hover:border-red-400 cursor-pointer"
-          >
-            Clear Fields
-          </Button>
+          {(startDateDay || startDateMonth || startDateYear || endDateDay || endDateMonth || endDateYear || dayCount !== null) && (
+            <Button
+              onClick={handleClear}
+              className="w-full backdrop-blur-md bg-red-500/30 hover:bg-red-500/50 text-white font-semibold py-3 rounded-lg transition-all hover:shadow-lg hover:shadow-red-600 border border-red-500/60 hover:border-red-400 cursor-pointer shadow-md"
+            >
+              Clear Fields
+            </Button>
+          )}
         </div>
       </div>
     </div>

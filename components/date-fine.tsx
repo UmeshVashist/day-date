@@ -482,14 +482,14 @@ export default function DateFine() {
           </div>
 
           {/* Checkbox for include base date */}
-          <div className="flex  space-x-3 backdrop-blur-md bg-white/20 p-4 rounded-lg border border-white/40">
+          <div className="flex items-center justify-start gap-2 w-fit">
             <Checkbox
               id="include-base-date"
               checked={includeBaseDate}
               onCheckedChange={(checked) => setIncludeBaseDate(checked as boolean)}
-              className="w-5 h-5 cursor-pointer border border-white/60"
+              className="w-4 h-4 cursor-pointer border-white"
             />
-            <label htmlFor="include-base-date" className="text-sm font-medium text-white cursor-pointer">
+            <label htmlFor="include-base-date" className="text-xs text-white font-medium cursor-pointer select-none">
               {includeBaseDate ? "Counting: Start date to End date (inclusive)" : "Counting: Start date to End date"}
             </label>
           </div>
@@ -516,12 +516,14 @@ export default function DateFine() {
           )}
 
           {/* Clear Button */}
-          <Button
-            onClick={handleClear}
-            className="w-full backdrop-blur-md bg-red-500/30 hover:bg-red-500/50 text-white font-semibold py-3 rounded-lg transition hover:cursor-pointer transition-all hover:shadow-lg hover:shadow-red-600 border border-red-500/60 hover:border-red-400 cursor-pointer"
-          >
-            Clear Fields
-          </Button>
+          {(baseDateDay || baseDateMonth || baseDateYear || yearsToAdd || monthsToAdd || weeksToAdd || daysToAdd || resultDate) && (
+            <Button
+              onClick={handleClear}
+              className="w-full backdrop-blur-md bg-red-500/30 hover:bg-red-500/50 text-white font-semibold py-3 rounded-lg transition-all hover:shadow-lg hover:shadow-red-600 border border-red-500/60 hover:border-red-400 cursor-pointer shadow-md"
+            >
+              Clear Fields
+            </Button>
+          )}
         </div>
       </div>
     </div>
