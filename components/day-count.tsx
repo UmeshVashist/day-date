@@ -472,14 +472,19 @@ export default function DayCount() {
   }, [startDate, endDate, startDateDay, startDateMonth, startDateYear, endDateDay, endDateMonth, endDateYear, includeEndDate, startDateDayError, startDateMonthError, endDateDayError, endDateMonthError])
 
   const handleClear = () => {
+    setIsStartDateTodayChecked(false)
+    setIsEndDateTodayChecked(false)
     setStartDate("")
     setStartDateDay("")
     setStartDateMonth("")
     setStartDateYear("")
+    updateStartDate("", "", "")
     setEndDate("")
     setEndDateDay("")
     setEndDateMonth("")
     setEndDateYear("")
+    updateEndDate("", "", "")
+    
     setDayCount(null)
     setDateDifference(null)
     setExtraResults(null)
@@ -487,9 +492,9 @@ export default function DayCount() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4">
       <div>
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Start Date Input - Separate fields */}
           <div>
             <div className="flex items-center justify-between mb-2">
@@ -516,8 +521,8 @@ export default function DayCount() {
                   updateStartDate("", "", "")
                 }
               }}>
-                <Checkbox checked={isStartDateTodayChecked} className="w-4 h-4 cursor-pointer border-white" />
-                <span className="text-xs text-white font-medium">Today</span>
+                <Checkbox checked={isStartDateTodayChecked} className="w-4 h-4 cursor-pointer border-cyan-500" />
+                <span className="text-xs text-cyan-500 font-medium">Today</span>
               </div>
             </div>
             <div className="flex gap-1 sm:gap-2 items-end flex-wrap sm:flex-nowrap">
@@ -601,8 +606,8 @@ export default function DayCount() {
                   updateEndDate("", "", "")
                 }
               }}>
-                <Checkbox checked={isEndDateTodayChecked} className="w-4 h-4 cursor-pointer border-white" />
-                <span className="text-xs text-white font-medium">Today</span>
+                <Checkbox checked={isEndDateTodayChecked} className="w-4 h-4 cursor-pointer border-cyan-500" />
+                <span className="text-xs text-cyan-500 font-medium">Today</span>
               </div>
             </div>
             <div className="flex gap-2 items-end">
@@ -666,9 +671,9 @@ export default function DayCount() {
               id="include-end-date"
               checked={includeEndDate}
               onCheckedChange={(checked) => setIncludeEndDate(checked as boolean)}
-              className="w-4 h-4 cursor-pointer border-white"
+              className="w-4 h-4 cursor-pointer border-yellow-500"
             />
-            <label htmlFor="include-end-date" className="text-xs text-white font-medium cursor-pointer select-none">
+            <label htmlFor="include-end-date" className="text-xs text-yellow-500 font-medium cursor-pointer select-none">
               {includeEndDate
                 ? "Counting: Start date to End date (inclusive)"
                 : "Counting: Start date to End date"}
@@ -697,7 +702,7 @@ export default function DayCount() {
                   </div>
                 </div>
               </div>
-              <p className="text-xs text-gray-500 text-center">Time difference between dates</p>
+              {/* <p className="text-xs text-gray-500 text-center">Time difference between dates</p> */}
 
               {extraResults && (
                 <div className="grid grid-cols-2 gap-2 mt-4">

@@ -213,7 +213,8 @@ export default function DateFine() {
     const day = String(date.getDate()).padStart(2, "0")
     const month = String(date.getMonth() + 1).padStart(2, "0")
     const year = date.getFullYear()
-    return `${day}/${month}/${year}`
+    const dayName = date.toLocaleDateString("en-US", { weekday: "long" })
+    return { date: `${day}/${month}/${year}`, dayName }
   }
 
   useEffect(() => {
@@ -262,8 +263,8 @@ export default function DateFine() {
           }
         }
 
-        const formattedResult = formatDateOutput(result)
-        setResultDate(formattedResult)
+        const { date, dayName } = formatDateOutput(result)
+        setResultDate(`${date} (${dayName})`)
       }
     } else {
       setResultDate("")
@@ -304,7 +305,12 @@ export default function DateFine() {
   }
 
   const handleClear = () => {
+    setIsBaseDateTodayChecked(false)
     setBaseDate("")
+    setBaseDateDay("")
+    setBaseDateMonth("")
+    setBaseDateYear("")
+    updateBaseDate("", "", "")
     setYearsToAdd("")
     setMonthsToAdd("")
     setWeeksToAdd("")
@@ -315,9 +321,9 @@ export default function DateFine() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4">
       <div>
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Base Date Input - Separate fields */}
           <div>
             <div className="flex items-center justify-between mb-2">
@@ -344,8 +350,8 @@ export default function DateFine() {
                   updateBaseDate("", "", "")
                 }
               }}>
-                <Checkbox checked={isBaseDateTodayChecked} className="w-4 h-4 cursor-pointer border-white" />
-                <span className="text-xs text-white font-medium">Today</span>
+                <Checkbox checked={isBaseDateTodayChecked} className="w-4 h-4 cursor-pointer border-cyan-500" />
+                <span className="text-xs text-cyan-500 font-medium">Today</span>
               </div>
             </div>
             <div className="flex gap-2 items-end">
@@ -410,7 +416,7 @@ export default function DateFine() {
                   {isAddMode ? "Adding" : "Subtracting"}
                 </div>
                 <div className="flex items-center gap-2 cursor-pointer" onClick={() => setIsAddMode(!isAddMode)}>
-                  <Checkbox checked={isAddMode} className="w-4 h-4 cursor-pointer border-white" />
+                  <Checkbox checked={isAddMode} className="w-4 h-4 cursor-pointer border-cyan-500" />
                   <span className="text-xs text-cyan-500 font-medium">Add/Subtract</span>
                 </div>
               </div>
@@ -487,9 +493,9 @@ export default function DateFine() {
               id="include-base-date"
               checked={includeBaseDate}
               onCheckedChange={(checked) => setIncludeBaseDate(checked as boolean)}
-              className="w-4 h-4 cursor-pointer border-white"
+              className="w-4 h-4 cursor-pointer border-yellow-500"
             />
-            <label htmlFor="include-base-date" className="text-xs text-white font-medium cursor-pointer select-none">
+            <label htmlFor="include-base-date" className="text-xs text-yellow-500 font-medium cursor-pointer select-none">
               {includeBaseDate ? "Counting: Start date to End date (inclusive)" : "Counting: Start date to End date"}
             </label>
           </div>

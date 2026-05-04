@@ -30,67 +30,39 @@ export default function Home() {
     "cursor-pointer hover:bg-blue-500 hover:text-white focus:bg-blue-500 focus:text-white"
 
   return (
-    <main className="min-h-screen px-4 pt-1 pb-6 overflow-y-auto scrollbar-style">
-      <div className="max-w-2xl mx-auto">
-
-        {/* Header */}
-        <div className="hero-header mb-4 sm:mb-6">
-          <h1 className="text-2xl sm:text-4xl font-bold animated-title text-center">
+    <main className="min-h-screen py-2 sm:py-4 px-4 flex flex-col items-center">
+      <div className="w-full max-w-2xl">
+        {/* Header - Gradient Text */}
+        <h1 className="text-3xl sm:text-5xl font-black text-center mb-2 sm:mb-3 tracking-tight">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-400 drop-shadow-sm">
             Day & Date System
-          </h1>
-        </div>
+          </span>
+        </h1>
 
         {/* Selector Card - Glass UI */}
-        <div className="backdrop-blur-md bg-white/30 rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-5 mb-4 sm:mb-5 border border-white/40">
-          <div className="flex flex-col sm:flex-row gap-4 items-end">
-
-            <div className="flex-1">
-              <label className="block text-xs sm:text-sm font-semibold text-cyan-500 mb-2 sm:mb-3">
-                Select Calculator
-              </label>
-
-              <Select value={selectedOption} onValueChange={handleChange}>
-                <SelectTrigger className="w-full backdrop-blur-sm bg-white/20 border-white/40 hover:bg-white/30 hover:border-white/60 transition cursor-pointer text-black">
-                  <SelectValue placeholder="Choose an option" />
-                </SelectTrigger>
-
-                <SelectContent className="backdrop-blur-md bg-slate-900/60 text-cyan-500 border-white/30 scrollable-dropdown">
-
-                  <SelectItem
-                    value="default"
-                    disabled
-                    className="cursor-not-allowed opacity-60 text-cyan-500"
-                  >
-                    Choose an option
-                  </SelectItem>
-
-                  <SelectItem value="day-count" className={itemStyle}>
-                    Day Count
-                  </SelectItem>
-
-                  <SelectItem value="date-fine" className={itemStyle}>
-                    Date Fine
-                  </SelectItem>
-
-                  <SelectItem value="days-convert" className={itemStyle}>
-                    Days Convert
-                  </SelectItem>
-
-                  {/* <SelectItem value="calendar" className={itemStyle}>
-                    Calendar
-                  </SelectItem> */}
-
-                </SelectContent>
-              </Select>
+        <div className="backdrop-blur-md bg-white/30 rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-5 mb-2 sm:mb-3 border border-white/40">
+          <div className="flex flex-col space-y-2">
+            <label className="text-sm font-semibold text-cyan-500">Select Calculator</label>
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <Select value={selectedOption} onValueChange={handleChange}>
+                  <SelectTrigger className="w-full bg-white/20 backdrop-blur-md border-white/40 text-black h-12">
+                    <SelectValue placeholder="Select a calculator" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-900/90 backdrop-blur-xl border-white/20 text-cyan-500">
+                    <SelectItem value="day-count" className="hover:bg-white/10 cursor-pointer">Day Count</SelectItem>
+                    <SelectItem value="date-fine" className="hover:bg-white/10 cursor-pointer">Date Fine</SelectItem>
+                    <SelectItem value="days-convert" className="hover:bg-white/10 cursor-pointer">Days Convert</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button 
+                onClick={handleClear}
+                className="bg-purple-600 hover:cursor-pointer hover:bg-purple-700 text-white font-bold px-8 h-12 rounded-xl transition-all shadow-lg shadow-purple-500/30"
+              >
+                Clear
+              </Button>
             </div>
-
-            <Button
-              onClick={handleClear}
-              className="w-full sm:w-auto bg-purple-600 hover:bg-gray-300 text-white hover:text-red-500 font-semibold py-3 px-6 rounded-lg transition shadow-md hover:shadow-lg hover:shadow-red-600 cursor-pointer"
-            >
-              Clear
-            </Button>
-
           </div>
         </div>
 

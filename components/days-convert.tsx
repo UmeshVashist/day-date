@@ -105,10 +105,10 @@ export default function DaysConvert() {
 
   return (
     <div className="w-full">
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-4">
         {/* Total Days Input Section - 3 Inputs with + symbols */}
-        <div className="flex flex-col gap-4">
-          <label className="text-sm font-semibold text-white text-center">Total Days</label>
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-semibold text-cyan-500 text-center">Total Days</label>
           <div className="flex flex-wrap items-end justify-center gap-2 sm:gap-3">
             {/* Input Day 1 */}
             <div className="flex flex-col gap-2">
@@ -166,7 +166,7 @@ export default function DaysConvert() {
         {/* Converted Result Section */}
         {(inputDay1 || inputDay2 || inputDay3) && (
           <div className="space-y-4">
-            <h3 className="text-lg font-bold text-white text-center">Converted Result</h3>
+            <h3 className="text-lg font-bold text-cyan-500 text-center">Converted Result</h3>
             
             <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-cyan-500 rounded-lg overflow-hidden border border-slate-700 shadow-lg">
               <div className="grid grid-cols-3 gap-0">
