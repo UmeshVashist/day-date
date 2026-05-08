@@ -30,6 +30,15 @@ export default function DayCount() {
     totalHours: number;
     totalMinutes: number;
     totalSeconds: number;
+    dayCounts: {
+      Sunday: number;
+      Monday: number;
+      Tuesday: number;
+      Wednesday: number;
+      Thursday: number;
+      Friday: number;
+      Saturday: number;
+    };
   } | null>(null)
   const [isStartDateTodayChecked, setIsStartDateTodayChecked] = useState<boolean>(false)
   const [isEndDateTodayChecked, setIsEndDateTodayChecked] = useState<boolean>(false)
@@ -452,6 +461,31 @@ export default function DayCount() {
         const totalMinutes = totalHours * 60
         const totalSeconds = totalMinutes * 60
 
+        // Calculate counts for each day of the week
+        const dayCounts = {
+          Sunday: 0,
+          Monday: 0,
+          Tuesday: 0,
+          Wednesday: 0,
+          Thursday: 0,
+          Friday: 0,
+          Saturday: 0
+        }
+
+        const current = new Date(start)
+        const loopEnd = new Date(end)
+        if (includeEndDate) {
+          loopEnd.setDate(loopEnd.getDate() + 1)
+        }
+
+        // Iterate through each day and count
+        const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+        while (current < loopEnd) {
+          const dayName = daysOfWeek[current.getDay()] as keyof typeof dayCounts
+          dayCounts[dayName]++
+          current.setDate(current.getDate() + 1)
+        }
+
         setExtraResults({
           totalWeeks,
           remainingDaysAfterWeeks,
@@ -461,7 +495,8 @@ export default function DayCount() {
           remainingDaysAfterYears: remainingDaysAfterYears,
           totalHours,
           totalMinutes,
-          totalSeconds
+          totalSeconds,
+          dayCounts
         })
       }
     } else {
@@ -492,9 +527,25 @@ export default function DayCount() {
   }
 
   return (
-    <div className="space-y-4">
-      <div>
-        <div className="space-y-4">
+    <div className="flex flex-col lg:flex-row gap-6 items-start justify-center">
+      {/* Left Sidebar - Day Counts */}
+      {dayCount !== null && extraResults && (
+        <div className="w-full lg:w-64 bg-slate-900/40 backdrop-blur-md p-4 rounded-2xl border border-slate-700/50 shadow-xl self-stretch">
+          <p className="text-xs font-bold text-white uppercase tracking-widest mb-4 text-center opacity-80 border-b border-slate-700/50 pb-2">DAYS DISTRIBUTION</p>
+          <div className="flex flex-col gap-1">
+            {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map((day) => (
+              <div key={day} className="bg-slate-900/60 p-3 rounded-xl border border-slate-700/30 flex justify-between items-center px-4 transition-all hover:bg-slate-800/60 h-[52px]">
+              <span className="text-sm font-medium text-cyan-500">{day}</span>
+              <span className="text-lg font-normal text-cyan-500">{extraResults.dayCounts[day as keyof typeof extraResults.dayCounts]}</span>
+            </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Main Content Area */}
+      <div className="flex-1 w-full max-w-2xl space-y-4">
+        <div className="bg-slate-900/40 backdrop-blur-md p-6 rounded-2xl border border-slate-700/50 shadow-xl space-y-4">
           {/* Start Date Input - Separate fields */}
           <div>
             <div className="flex items-center justify-between mb-2">
@@ -540,8 +591,8 @@ export default function DayCount() {
                   onChange={(e) => handleStartDateDayChange(e.target.value)}
                   onKeyDown={handleStartDateDayKeyDown}
                   onBlur={handleStartDateDayBlur}
-                  maxLength="2"
-                  className={`w-full px-3 py-3 border text-white rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition text-center ${startDateDayError ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-purple-500"}`}
+                  maxLength={2}
+                  className={`w-full px-3 py-3 border text-white rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition text-center bg-slate-800/50 ${startDateDayError ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-purple-500"}`}
                 />
               </div>
               <div className="flex-1">
@@ -558,8 +609,8 @@ export default function DayCount() {
                   onChange={(e) => handleStartDateMonthChange(e.target.value)}
                   onKeyDown={handleStartDateMonthKeyDown}
                   onBlur={handleStartDateMonthBlur}
-                  maxLength="2"
-                  className={`w-full px-3 py-3 border rounded-lg text-white focus:outline-none focus:ring-2 focus:border-transparent transition text-center ${startDateMonthError ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-purple-500"}`}
+                  maxLength={2}
+                  className={`w-full px-3 py-3 border rounded-lg text-white focus:outline-none focus:ring-2 focus:border-transparent transition text-center bg-slate-800/50 ${startDateMonthError ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-purple-500"}`}
                 />
               </div>
               <div className="flex-1">
@@ -573,8 +624,8 @@ export default function DayCount() {
                   onChange={(e) => handleStartDateYearChange(e.target.value)}
                   onKeyDown={handleStartDateYearKeyDown}
                   onBlur={handleStartDateYearBlur}
-                  maxLength="4"
-                  className="w-full px-3 py-3 border border-gray-300 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition text-center"
+                  maxLength={4}
+                  className="w-full px-3 py-3 border border-gray-300 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition text-center bg-slate-800/50"
                 />
               </div>
             </div>
@@ -625,8 +676,8 @@ export default function DayCount() {
                   onChange={(e) => handleEndDateDayChange(e.target.value)}
                   onKeyDown={handleEndDateDayKeyDown}
                   onBlur={handleEndDateDayBlur}
-                  maxLength="2"
-                  className={`w-full px-3 py-3 border rounded-lg text-white focus:outline-none focus:ring-2 focus:border-transparent transition text-center ${endDateDayError ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-purple-500"}`}
+                  maxLength={2}
+                  className={`w-full px-3 py-3 border rounded-lg text-white focus:outline-none focus:ring-2 focus:border-transparent transition text-center bg-slate-800/50 ${endDateDayError ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-purple-500"}`}
                 />
               </div>
               <div className="flex-1">
@@ -643,8 +694,8 @@ export default function DayCount() {
                   onChange={(e) => handleEndDateMonthChange(e.target.value)}
                   onKeyDown={handleEndDateMonthKeyDown}
                   onBlur={handleEndDateMonthBlur}
-                  maxLength="2"
-                  className={`w-full px-3 py-3 border rounded-lg text-white focus:outline-none focus:ring-2 focus:border-transparent transition text-center ${endDateMonthError ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-purple-500"}`}
+                  maxLength={2}
+                  className={`w-full px-3 py-3 border rounded-lg text-white focus:outline-none focus:ring-2 focus:border-transparent transition text-center bg-slate-800/50 ${endDateMonthError ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-purple-500"}`}
                 />
               </div>
               <div className="flex-1">
@@ -658,8 +709,8 @@ export default function DayCount() {
                   onChange={(e) => handleEndDateYearChange(e.target.value)}
                   onKeyDown={handleEndDateYearKeyDown}
                   onBlur={handleEndDateYearBlur}
-                  maxLength="4"
-                  className="w-full px-3 py-3 border border-gray-300 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition text-center"
+                  maxLength={4}
+                  className="w-full px-3 py-3 border border-gray-300 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition text-center bg-slate-800/50"
                 />
               </div>
             </div>
@@ -682,66 +733,26 @@ export default function DayCount() {
 
           {dayCount !== null && dateDifference && (
             <div className="space-y-3">
-              <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-cyan-500 rounded-lg overflow-hidden">
+              <div className="bg-slate-900/60 text-cyan-500 rounded-lg overflow-hidden border border-slate-700/50 shadow-2xl">
                 <div className="grid grid-cols-3 gap-0">
-                  <div className="border-r border-slate-700 p-4">
-                    <p className="text-xs font-semibold text-cyan-400 uppercase tracking-wide mb-2 text-center">
-                      Years
+                  <div className="border-r border-slate-700/50 p-4">
+                    <p className="text-sm font-semibold text-cyan-400 uppercase tracking-wide mb-2 text-center">
+                      YEARS
                     </p>
-                    <p className="text-lg font-bold text-cyan-500 text-center">{dateDifference.years}</p>
+                    <p className="text-2xl font-normal text-cyan-500 text-center">{dateDifference.years}</p>
                   </div>
-                  <div className="border-r border-slate-700 p-4">
-                    <p className="text-xs font-semibold text-cyan-400 uppercase tracking-wide mb-2 text-center">
-                      Months
+                  <div className="border-r border-slate-700/50 p-4">
+                    <p className="text-sm font-semibold text-cyan-400 uppercase tracking-wide mb-2 text-center">
+                      MONTHS
                     </p>
-                    <p className="text-lg font-bold text-cyan-500 text-center">{dateDifference.months}</p>
+                    <p className="text-2xl font-normal text-cyan-500 text-center">{dateDifference.months}</p>
                   </div>
                   <div className="p-4">
-                    <p className="text-xs font-semibold text-cyan-400 uppercase tracking-wide mb-2 text-center">Days</p>
-                    <p className="text-lg font-bold text-cyan-500 text-center">{dateDifference.days}</p>
+                    <p className="text-sm font-semibold text-cyan-400 uppercase tracking-wide mb-2 text-center">DAYS</p>
+                    <p className="text-2xl font-normal text-cyan-500 text-center">{dateDifference.days}</p>
                   </div>
                 </div>
               </div>
-              {/* <p className="text-xs text-gray-500 text-center">Time difference between dates</p> */}
-
-              {extraResults && (
-                <div className="grid grid-cols-2 gap-2 mt-4">
-                  <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-3 rounded-lg border border-slate-700">
-                    <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-1 text-center">Total Days</p>
-                    <p className="text-lg font-bold text-cyan-500 text-center">{dayCount}</p>
-                  </div>
-                  <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-3 rounded-lg border border-slate-700">
-                    <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-1 text-center">Total Weeks</p>
-                    <p className="text-lg font-bold text-cyan-500 text-center">
-                      {extraResults.totalWeeks} <span className="text-xs font-normal text-cyan-400/70">w</span> {extraResults.remainingDaysAfterWeeks} <span className="text-xs font-normal text-cyan-400/70">d</span>
-                    </p>
-                  </div>
-                  <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-3 rounded-lg border border-slate-700">
-                    <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-1 text-center">Total Months</p>
-                    <p className="text-lg font-bold text-cyan-500 text-center">
-                      {extraResults.totalMonths} <span className="text-xs font-normal text-cyan-400/70">m</span> {extraResults.remainingDaysAfterMonths} <span className="text-xs font-normal text-cyan-400/70">d</span>
-                    </p>
-                  </div>
-                  <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-3 rounded-lg border border-slate-700">
-                    <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-1 text-center">Total Years</p>
-                    <p className="text-lg font-bold text-cyan-500 text-center">
-                      {extraResults.totalYears} <span className="text-xs font-normal text-cyan-400/70">y</span> {extraResults.remainingDaysAfterYears} <span className="text-xs font-normal text-cyan-400/70">d</span>
-                    </p>
-                  </div>
-                  <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-3 rounded-lg border border-slate-700">
-                    <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-1 text-center">Total Hours</p>
-                    <p className="text-lg font-bold text-cyan-500 text-center">{extraResults.totalHours.toLocaleString()}</p>
-                  </div>
-                  <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-3 rounded-lg border border-slate-700">
-                    <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-1 text-center">Total Minutes</p>
-                    <p className="text-lg font-bold text-cyan-500 text-center">{extraResults.totalMinutes.toLocaleString()}</p>
-                  </div>
-                  <div className="col-span-2 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-3 rounded-lg border border-slate-700">
-                    <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-1 text-center">Total Seconds</p>
-                    <p className="text-lg font-bold text-cyan-500 text-center">{extraResults.totalSeconds.toLocaleString()}</p>
-                  </div>
-                </div>
-              )}
             </div>
           )}
 
@@ -749,13 +760,55 @@ export default function DayCount() {
           {(startDateDay || startDateMonth || startDateYear || endDateDay || endDateMonth || endDateYear || dayCount !== null) && (
             <Button
               onClick={handleClear}
-              className="w-full backdrop-blur-md bg-red-500/30 hover:bg-red-500/50 text-white font-semibold py-3 rounded-lg transition-all hover:shadow-lg hover:shadow-red-600 border border-red-500/60 hover:border-red-400 cursor-pointer shadow-md"
+              className="w-full bg-red-500/20 hover:bg-red-500/40 text-red-400 font-medium py-2 rounded-lg transition-all border border-red-500/30 hover:border-red-500/50 cursor-pointer"
             >
               Clear Fields
             </Button>
           )}
         </div>
       </div>
+
+      {/* Right Sidebar - Extra Results */}
+      {dayCount !== null && extraResults && (
+        <div className="w-full lg:w-80 bg-slate-900/40 backdrop-blur-md p-4 rounded-2xl border border-slate-700/50 shadow-xl self-stretch">
+          <div className="grid grid-cols-2 gap-2 mb-2">
+            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-28">
+              <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL DAYS</p>
+              <p className="text-xl font-normal text-cyan-500 text-center">{dayCount}</p>
+            </div>
+            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-28">
+              <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL WEEKS</p>
+              <p className="text-xl font-normal text-cyan-500 text-center">
+                {extraResults.totalWeeks}<span className="text-xs font-normal text-cyan-400/70 ml-1">w</span> {extraResults.remainingDaysAfterWeeks}<span className="text-xs font-normal text-cyan-400/70 ml-1">d</span>
+              </p>
+            </div>
+            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-28">
+              <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL MONTHS</p>
+              <p className="text-xl font-normal text-cyan-500 text-center">
+                {extraResults.totalMonths}<span className="text-xs font-normal text-cyan-400/70 ml-1">m</span> {extraResults.remainingDaysAfterMonths}<span className="text-xs font-normal text-cyan-400/70 ml-1">d</span>
+              </p>
+            </div>
+            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-28">
+              <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL YEARS</p>
+              <p className="text-xl font-normal text-cyan-500 text-center">
+                {extraResults.totalYears}<span className="text-xs font-normal text-cyan-400/70 ml-1">y</span> {extraResults.remainingDaysAfterYears}<span className="text-xs font-normal text-cyan-400/70 ml-1">d</span>
+              </p>
+            </div>
+            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-28">
+              <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL HOURS</p>
+              <p className="text-xl font-normal text-cyan-500 text-center">{extraResults.totalHours.toLocaleString()}</p>
+            </div>
+            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-28">
+              <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL MINUTES</p>
+              <p className="text-xl font-normal text-cyan-500 text-center">{extraResults.totalMinutes.toLocaleString()}</p>
+            </div>
+          </div>
+          <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-24">
+            <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL SECONDS</p>
+            <p className="text-xl font-normal text-cyan-500 text-center">{extraResults.totalSeconds.toLocaleString()}</p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

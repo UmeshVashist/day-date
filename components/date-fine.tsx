@@ -17,6 +17,28 @@ export default function DateFine() {
   const [daysToAdd, setDaysToAdd] = useState<number | string>("")
   const [includeBaseDate, setIncludeBaseDate] = useState<boolean>(true)
   const [resultDate, setResultDate] = useState<string>("")
+  const [dayCounts, setDayCounts] = useState<{
+    Sunday: number;
+    Monday: number;
+    Tuesday: number;
+    Wednesday: number;
+    Thursday: number;
+    Friday: number;
+    Saturday: number;
+  } | null>(null)
+  const [extraResults, setExtraResults] = useState<{
+    totalWeeks: number;
+    remainingDaysAfterWeeks: number;
+    totalMonths: number;
+    remainingDaysAfterMonths: number;
+    totalYears: number;
+    remainingDaysAfterYears: number;
+    totalHours: number;
+    totalMinutes: number;
+    totalSeconds: number;
+    totalDays: number;
+  } | null>(null)
+  const [dateDifference, setDateDifference] = useState<{ years: number; months: number; days: number } | null>(null)
   const [isBaseDateTodayChecked, setIsBaseDateTodayChecked] = useState<boolean>(false)
   const [isAddMode, setIsAddMode] = useState<boolean>(true)
 
@@ -265,9 +287,112 @@ export default function DateFine() {
 
         const { date, dayName } = formatDateOutput(result)
         setResultDate(`${date} (${dayName})`)
+
+        // Calculate counts for each day of the week
+        const counts = {
+          Sunday: 0,
+          Monday: 0,
+          Tuesday: 0,
+          Wednesday: 0,
+          Thursday: 0,
+          Friday: 0,
+          Saturday: 0
+        }
+
+        let start: Date, end: Date
+        if (isAddMode) {
+          start = new Date(base)
+          end = new Date(result)
+        } else {
+          start = new Date(result)
+          end = new Date(base)
+        }
+
+        const current = new Date(start)
+        const loopEnd = new Date(end)
+        // In date-fine, we need to handle the inclusive logic correctly for the range
+        if (includeBaseDate) {
+          loopEnd.setDate(loopEnd.getDate() + 1)
+        } else {
+          // If not inclusive, we skip the first day
+          current.setDate(current.getDate() + 1)
+          loopEnd.setDate(loopEnd.getDate() + 1)
+        }
+
+        const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+        while (current < loopEnd) {
+          const name = daysOfWeek[current.getDay()] as keyof typeof counts
+          counts[name]++
+          current.setDate(current.getDate() + 1)
+        }
+        setDayCounts(counts)
+
+        // Calculate total days for extra results
+        const finalDiffTime = Math.abs(end.getTime() - start.getTime())
+        const finalDiffDays = Math.floor(finalDiffTime / (1000 * 60 * 60 * 24))
+        const finalCount = includeBaseDate ? finalDiffDays + 1 : finalDiffDays
+
+        // Calculate date difference for Years, Months, Days
+        const calculateDateDiff = (d1: Date, d2: Date) => {
+          const adjustedD2 = new Date(d2)
+          if (includeBaseDate) {
+            adjustedD2.setDate(adjustedD2.getDate() + 1)
+          }
+
+          let years = adjustedD2.getFullYear() - d1.getFullYear()
+          let months = adjustedD2.getMonth() - d1.getMonth()
+          let days = adjustedD2.getDate() - d1.getDate()
+
+          if (days < 0) {
+            months--
+            const prevMonth = new Date(adjustedD2.getFullYear(), adjustedD2.getMonth(), 0)
+            days += prevMonth.getDate()
+          }
+
+          if (months < 0) {
+            years--
+            months += 12
+          }
+          return { years, months, days }
+        }
+
+        const diff = calculateDateDiff(start, end)
+        setDateDifference(diff)
+
+        // Calculate extra results
+        const totalWeeks = Math.floor(finalCount / 7)
+        const remainingDaysAfterWeeks = finalCount % 7
+        const totalMonths = (diff.years * 12) + diff.months
+        const remainingDaysAfterMonths = diff.days
+        
+        const startForYears = new Date(start)
+        const endForYears = new Date(start)
+        endForYears.setFullYear(start.getFullYear() + diff.years)
+        const diffTimeYears = Math.abs(end.getTime() - endForYears.getTime())
+        const remainingDaysAfterYears = Math.floor(diffTimeYears / (1000 * 60 * 60 * 24)) + (includeBaseDate ? 1 : 0)
+        
+        const totalHours = finalCount * 24
+        const totalMinutes = totalHours * 60
+        const totalSeconds = totalMinutes * 60
+
+        setExtraResults({
+          totalWeeks,
+          remainingDaysAfterWeeks,
+          totalMonths,
+          remainingDaysAfterMonths,
+          totalYears: diff.years,
+          remainingDaysAfterYears,
+          totalHours,
+          totalMinutes,
+          totalSeconds,
+          totalDays: finalCount
+        })
       }
     } else {
       setResultDate("")
+      setDayCounts(null)
+      setExtraResults(null)
+      setDateDifference(null)
     }
   }, [baseDate, baseDateDay, baseDateMonth, baseDateYear, yearsToAdd, monthsToAdd, weeksToAdd, daysToAdd, includeBaseDate, baseDateDayError, baseDateMonthError, isAddMode])
 
@@ -316,14 +441,33 @@ export default function DateFine() {
     setWeeksToAdd("")
     setDaysToAdd("")
     setResultDate("")
+    setDayCounts(null)
+    setExtraResults(null)
+    setDateDifference(null)
     setIncludeBaseDate(true)
     setIsAddMode(true)
   }
 
   return (
-    <div className="space-y-4">
-      <div>
-        <div className="space-y-4">
+    <div className="flex flex-col lg:flex-row gap-6 items-start justify-center">
+      {/* Left Sidebar - Day Counts */}
+      {resultDate !== "" && dayCounts && (
+        <div className="w-full lg:w-64 bg-slate-900/40 backdrop-blur-md p-4 rounded-2xl border border-slate-700/50 shadow-xl self-stretch">
+          <p className="text-xs font-bold text-white uppercase tracking-widest mb-4 text-center opacity-80 border-b border-slate-700/50 pb-2">DAYS DISTRIBUTION</p>
+          <div className="flex flex-col gap-1">
+            {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map((day) => (
+              <div key={day} className="bg-slate-900/60 p-3 rounded-xl border border-slate-700/30 flex justify-between items-center px-4 transition-all hover:bg-slate-800/60 h-[52px]">
+              <span className="text-sm font-medium text-cyan-500">{day}</span>
+              <span className="text-lg font-normal text-cyan-500">{dayCounts[day as keyof typeof dayCounts]}</span>
+            </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Main Content Area */}
+      <div className="flex-1 w-full max-w-2xl space-y-4">
+        <div className="bg-slate-900/40 backdrop-blur-md p-6 rounded-2xl border border-slate-700/50 shadow-xl space-y-4">
           {/* Base Date Input - Separate fields */}
           <div>
             <div className="flex items-center justify-between mb-2">
@@ -369,8 +513,8 @@ export default function DateFine() {
                   onChange={(e) => handleBaseDateDayChange(e.target.value)}
                   onKeyDown={handleBaseDateDayKeyDown}
                   onBlur={handleBaseDateDayBlur}
-                  maxLength="2"
-                  className={`w-full px-3 py-3 border rounded-lg text-white focus:outline-none focus:ring-2 focus:border-transparent transition text-center ${baseDateDayError ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-purple-500"}`}
+                  maxLength={2}
+                  className={`w-full px-3 py-3 border rounded-lg text-white focus:outline-none focus:ring-2 focus:border-transparent transition text-center bg-slate-800/50 ${baseDateDayError ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-purple-500"}`}
                 />
               </div>
               <div className="flex-1">
@@ -387,8 +531,8 @@ export default function DateFine() {
                   onChange={(e) => handleBaseDateMonthChange(e.target.value)}
                   onKeyDown={handleBaseDateMonthKeyDown}
                   onBlur={handleBaseDateMonthBlur}
-                  maxLength="2"
-                  className={`w-full px-3 py-3 border rounded-lg text-white focus:outline-none focus:ring-2 focus:border-transparent transition text-center ${baseDateMonthError ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-purple-500"}`}
+                  maxLength={2}
+                  className={`w-full px-3 py-3 border rounded-lg text-white focus:outline-none focus:ring-2 focus:border-transparent transition text-center bg-slate-800/50 ${baseDateMonthError ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-purple-500"}`}
                 />
               </div>
               <div className="flex-1">
@@ -402,8 +546,8 @@ export default function DateFine() {
                   onChange={(e) => handleBaseDateYearChange(e.target.value)}
                   onKeyDown={handleBaseDateYearKeyDown}
                   onBlur={handleBaseDateYearBlur}
-                  maxLength="4"
-                  className="w-full px-3 py-3 border border-gray-300 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition text-center"
+                  maxLength={4}
+                  className="w-full px-3 py-3 border border-gray-300 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition text-center bg-slate-800/50"
                 />
               </div>
             </div>
@@ -433,7 +577,7 @@ export default function DateFine() {
                   onChange={(e) => handleNumberInput(e.target.value, setYearsToAdd)}
                   onKeyDown={handleYearsToAddKeyDown}
                   min="0"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition hover:cursor-pointer text-center"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition hover:cursor-pointer text-center bg-slate-800/50"
                 />
               </div>
 
@@ -449,7 +593,7 @@ export default function DateFine() {
                   onChange={(e) => handleNumberInput(e.target.value, setMonthsToAdd)}
                   onKeyDown={handleMonthsToAddKeyDown}
                   min="0"
-                  className="w-full px-4 py-3 border border-gray-300 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition hover:cursor-pointer text-center"
+                  className="w-full px-4 py-3 border border-gray-300 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition hover:cursor-pointer text-center bg-slate-800/50"
                 />
               </div>
 
@@ -465,7 +609,7 @@ export default function DateFine() {
                   onChange={(e) => handleNumberInput(e.target.value, setWeeksToAdd)}
                   onKeyDown={handleWeeksToAddKeyDown}
                   min="0"
-                  className="w-full px-4 py-3 border border-gray-300 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition hover:cursor-pointer text-center"
+                  className="w-full px-4 py-3 border border-gray-300 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition hover:cursor-pointer text-center bg-slate-800/50"
                 />
               </div>
 
@@ -481,7 +625,7 @@ export default function DateFine() {
                   onChange={(e) => handleNumberInput(e.target.value, setDaysToAdd)}
                   onKeyDown={handleDaysToAddKeyDown}
                   min="0"
-                  className="w-full px-4 py-3 border border-gray-300 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition hover:cursor-pointer text-center"
+                  className="w-full px-4 py-3 border border-gray-300 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition hover:cursor-pointer text-center bg-slate-800/50"
                 />
               </div>
             </div>
@@ -500,22 +644,24 @@ export default function DateFine() {
             </label>
           </div>
 
-          {resultDate && (
-            <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-cyan-500 rounded-lg overflow-hidden">
-              <div className="grid grid-cols-2 gap-0">
-                <div className="border-r border-slate-700 p-4">
-                  <p className="text-xs font-semibold text-cyan-400 uppercase tracking-wide mb-2 text-center">
-                    Result Date
-                  </p>
-                  <p className="text-lg font-bold text-cyan-500 text-center">{resultDate}</p>
-                </div>
-                <div className="p-4">
-                  <p className="text-xs font-semibold text-cyan-400 uppercase tracking-wide mb-2 text-center">
-                    {isAddMode ? "Total Added:" : "Total Subtracted:"}
-                  </p>
-                  <p className="text-lg font-bold text-cyan-500 text-center">
-                    {yearsToAdd || 0}Y {monthsToAdd || 0}M {weeksToAdd || 0}W {daysToAdd || 0}D
-                  </p>
+          {resultDate !== "" && (
+            <div className="space-y-3">
+              <div className="bg-slate-900/60 text-cyan-500 rounded-lg overflow-hidden border border-slate-700/50 shadow-2xl">
+                <div className="grid grid-cols-2 gap-0">
+                  <div className="border-r border-slate-700/50 p-4">
+                    <p className="text-sm font-semibold text-cyan-400 uppercase tracking-wide mb-2 text-center">
+                      RESULT DATE
+                    </p>
+                    <p className="text-xl font-normal text-cyan-500 text-center">{resultDate}</p>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-sm font-semibold text-cyan-400 uppercase tracking-wide mb-2 text-center">
+                      {isAddMode ? "TOTAL ADDED" : "TOTAL SUBTRACTED"}
+                    </p>
+                    <p className="text-xl font-normal text-cyan-500 text-center">
+                      {yearsToAdd || 0}Y {monthsToAdd || 0}M {weeksToAdd || 0}W {daysToAdd || 0}D
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -525,13 +671,55 @@ export default function DateFine() {
           {(baseDateDay || baseDateMonth || baseDateYear || yearsToAdd || monthsToAdd || weeksToAdd || daysToAdd || resultDate) && (
             <Button
               onClick={handleClear}
-              className="w-full backdrop-blur-md bg-red-500/30 hover:bg-red-500/50 text-white font-semibold py-3 rounded-lg transition-all hover:shadow-lg hover:shadow-red-600 border border-red-500/60 hover:border-red-400 cursor-pointer shadow-md"
+              className="w-full bg-red-500/20 hover:bg-red-500/40 text-red-400 font-medium py-2 rounded-lg transition-all border border-red-500/30 hover:border-red-500/50 cursor-pointer"
             >
               Clear Fields
             </Button>
           )}
         </div>
       </div>
+
+      {/* Right Sidebar - Extra Results */}
+      {resultDate !== "" && extraResults && (
+        <div className="w-full lg:w-80 bg-slate-900/40 backdrop-blur-md p-4 rounded-2xl border border-slate-700/50 shadow-xl self-stretch">
+          <div className="grid grid-cols-2 gap-2 mb-2">
+            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-28">
+              <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL DAYS</p>
+              <p className="text-xl font-normal text-cyan-500 text-center">{extraResults.totalDays}</p>
+            </div>
+            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-28">
+              <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL WEEKS</p>
+              <p className="text-xl font-normal text-cyan-500 text-center">
+                {extraResults.totalWeeks}<span className="text-xs font-normal text-cyan-400/70 ml-1">w</span> {extraResults.remainingDaysAfterWeeks}<span className="text-xs font-normal text-cyan-400/70 ml-1">d</span>
+              </p>
+            </div>
+            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-28">
+              <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL MONTHS</p>
+              <p className="text-xl font-normal text-cyan-500 text-center">
+                {extraResults.totalMonths}<span className="text-xs font-normal text-cyan-400/70 ml-1">m</span> {extraResults.remainingDaysAfterMonths}<span className="text-xs font-normal text-cyan-400/70 ml-1">d</span>
+              </p>
+            </div>
+            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-28">
+              <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL YEARS</p>
+              <p className="text-xl font-normal text-cyan-500 text-center">
+                {extraResults.totalYears}<span className="text-xs font-normal text-cyan-400/70 ml-1">y</span> {extraResults.remainingDaysAfterYears}<span className="text-xs font-normal text-cyan-400/70 ml-1">d</span>
+              </p>
+            </div>
+            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-28">
+              <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL HOURS</p>
+              <p className="text-xl font-normal text-cyan-500 text-center">{extraResults.totalHours.toLocaleString()}</p>
+            </div>
+            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-28">
+              <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL MINUTES</p>
+              <p className="text-xl font-normal text-cyan-500 text-center">{extraResults.totalMinutes.toLocaleString()}</p>
+            </div>
+          </div>
+          <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-24">
+            <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL SECONDS</p>
+            <p className="text-xl font-normal text-cyan-500 text-center">{extraResults.totalSeconds.toLocaleString()}</p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
