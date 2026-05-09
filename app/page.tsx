@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import DayCount from "@/components/day-count"
 import DateFine from "@/components/date-fine"
 import Calendar from "@/components/calendar"
 import DaysConvert from "@/components/days-convert"
+import Calculator from "@/components/calculator"
 import { Button } from "@/components/ui/button"
 import {
   Select,
@@ -16,6 +17,35 @@ import {
 
 export default function Home() {
   const [selectedOption, setSelectedOption] = useState<string>("default")
+  const [currentTime, setCurrentTime] = useState<Date>(new Date())
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+    const timer = setInterval(() => {
+      setCurrentTime(new Date())
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [])
+
+  const formatDateTime = (date: Date) => {
+    const day = String(date.getDate()).padStart(2, "0")
+    const month = String(date.getMonth() + 1).padStart(2, "0")
+    const year = date.getFullYear()
+    
+    let hours = date.getHours()
+    const ampm = hours >= 12 ? "PM" : "AM"
+    hours = hours % 12
+    hours = hours ? hours : 12
+    const hoursStr = String(hours).padStart(2, "0")
+    const minutes = String(date.getMinutes()).padStart(2, "0")
+    const seconds = String(date.getSeconds()).padStart(2, "0")
+    
+    return {
+      date: `${day}/${month}/${year}`,
+      time: `${hoursStr}:${minutes}:${seconds} ${ampm}`
+    }
+  }
 
   const handleClear = () => {
     setSelectedOption("default")
@@ -54,6 +84,7 @@ export default function Home() {
                       <SelectItem value="day-count" className="hover:bg-white/10 cursor-pointer">Day Count</SelectItem>
                       <SelectItem value="date-fine" className="hover:bg-white/10 cursor-pointer">Date Fine</SelectItem>
                       <SelectItem value="days-convert" className="hover:bg-white/10 cursor-pointer">Days Convert</SelectItem>
+                      <SelectItem value="calculator" className="hover:bg-white/10 cursor-pointer">Calculator</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -64,16 +95,31 @@ export default function Home() {
                   Clear
                 </Button>
               </div>
+              
+              {/* Real-time Clock */}
+              <div className="text-center flex items-center justify-center gap-2 min-h-[32px]">
+                {mounted && (
+                  <>
+                    <span className="text-xl sm:text-2xl bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-400 drop-shadow-sm">
+                      {formatDateTime(currentTime).date}
+                    </span>
+                    <span className="text-xl sm:text-2xl bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-400 drop-shadow-sm">
+                      {formatDateTime(currentTime).time}
+                    </span>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
         {/* Content Area */}
         {selectedOption !== "default" && (
-          <div className={`${(selectedOption === 'day-count' || selectedOption === 'date-fine') ? 'w-full' : 'backdrop-blur-md bg-white/20 rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-5 border border-white/40 max-w-2xl mx-auto'} mb-6 sm:mb-8 transition-all duration-300`}>
+          <div className={`${(selectedOption === 'day-count' || selectedOption === 'date-fine' || selectedOption === 'calculator') ? 'w-full' : 'backdrop-blur-md bg-white/20 rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-5 border border-white/40 max-w-2xl mx-auto'} mb-6 sm:mb-8 transition-all duration-300`}>
             {selectedOption === "day-count" && <DayCount />}
             {selectedOption === "date-fine" && <DateFine />}
             {selectedOption === "days-convert" && <DaysConvert />}
+            {selectedOption === "calculator" && <Calculator />}
             {selectedOption === "calendar" && <Calendar />}
           </div>
         )}
@@ -81,7 +127,7 @@ export default function Home() {
 
       {/* Version Footer */}
       <div className="fixed bottom-4 left-4">
-        <span className="bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-400 drop-shadow-sm font-bold text-sm">version 1.3</span>
+        <span className="bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-400 drop-shadow-sm font-bold text-sm">version 1.4</span>
       </div>
     </main>
   )
