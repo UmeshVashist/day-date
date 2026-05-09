@@ -3,6 +3,13 @@
 import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 export default function DateFine() {
   const [baseDate, setBaseDate] = useState<string>("")
@@ -16,6 +23,7 @@ export default function DateFine() {
   const [weeksToAdd, setWeeksToAdd] = useState<number | string>("")
   const [daysToAdd, setDaysToAdd] = useState<number | string>("")
   const [includeBaseDate, setIncludeBaseDate] = useState<boolean>(true)
+  const [excludeOption, setExcludeOption] = useState<string>("all")
   const [resultDate, setResultDate] = useState<string>("")
   const [dayCounts, setDayCounts] = useState<{
     Sunday: number;
@@ -258,134 +266,144 @@ export default function DateFine() {
       const months = Number.parseInt(monthsToAdd as string) || 0
       const weeks = Number.parseInt(weeksToAdd as string) || 0
       const days = Number.parseInt(daysToAdd as string) || 0
-      const totalDays = weeks * 7 + days
+      const totalDaysDelta = weeks * 7 + days
 
       if (base && !isNaN(base.getTime())) {
+        // 1. Calculate the Result Date first
         const result = new Date(base)
-
         if (isAddMode) {
           result.setFullYear(result.getFullYear() + years)
           result.setMonth(result.getMonth() + months)
-
-          // Adjust for base date counting
           if (includeBaseDate) {
-            result.setDate(result.getDate() - 1 + totalDays)
+            result.setDate(result.getDate() - 1 + totalDaysDelta)
           } else {
-            result.setDate(result.getDate() + totalDays)
+            result.setDate(result.getDate() + totalDaysDelta)
           }
         } else {
           result.setFullYear(result.getFullYear() - years)
           result.setMonth(result.getMonth() - months)
-
-          // Adjust for base date counting in subtraction
           if (includeBaseDate) {
-            result.setDate(result.getDate() + 1 - totalDays)
+            result.setDate(result.getDate() + 1 - totalDaysDelta)
           } else {
-            result.setDate(result.getDate() - totalDays)
+            result.setDate(result.getDate() - totalDaysDelta)
           }
         }
 
-        const { date, dayName } = formatDateOutput(result)
-        setResultDate(`${date} (${dayName})`)
+        const { date: formattedDate, dayName } = formatDateOutput(result)
+        setResultDate(`${formattedDate} (${dayName})`)
 
-        // Calculate counts for each day of the week
-        const counts = {
-          Sunday: 0,
-          Monday: 0,
-          Tuesday: 0,
-          Wednesday: 0,
-          Thursday: 0,
-          Friday: 0,
-          Saturday: 0
-        }
-
-        let start: Date, end: Date
+        // 2. Define range for distribution and counts
+        let startRange: Date, endRange: Date
         if (isAddMode) {
-          start = new Date(base)
-          end = new Date(result)
+          startRange = new Date(base)
+          endRange = new Date(result)
         } else {
-          start = new Date(result)
-          end = new Date(base)
+          startRange = new Date(result)
+          endRange = new Date(base)
         }
 
-        const current = new Date(start)
-        const loopEnd = new Date(end)
-        // In date-fine, we need to handle the inclusive logic correctly for the range
+        // 3. Initialize counts
+        const counts = { Sunday: 0, Monday: 0, Tuesday: 0, Wednesday: 0, Thursday: 0, Friday: 0, Saturday: 0 }
+        let filteredTotalCount = 0
+        const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+
+        // 4. Iterate through the range
+        const current = new Date(startRange)
+        const loopEnd = new Date(endRange)
+        
+        // Handle inclusive logic for the range
         if (includeBaseDate) {
           loopEnd.setDate(loopEnd.getDate() + 1)
         } else {
-          // If not inclusive, we skip the first day
           current.setDate(current.getDate() + 1)
           loopEnd.setDate(loopEnd.getDate() + 1)
         }
 
-        const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
         while (current < loopEnd) {
           const name = daysOfWeek[current.getDay()] as keyof typeof counts
-          counts[name]++
+          const isSaturday = current.getDay() === 6
+          const isSunday = current.getDay() === 0
+          
+          let shouldCount = true
+          if (excludeOption === "saturday" && isSaturday) shouldCount = false
+          if (excludeOption === "sunday" && isSunday) shouldCount = false
+          if (excludeOption === "select" && (isSaturday || isSunday)) shouldCount = false
+
+          if (shouldCount) {
+            counts[name]++
+            filteredTotalCount++
+          } else {
+            counts[name]--
+          }
           current.setDate(current.getDate() + 1)
         }
         setDayCounts(counts)
 
-        // Calculate total days for extra results
-        const finalDiffTime = Math.abs(end.getTime() - start.getTime())
-        const finalDiffDays = Math.floor(finalDiffTime / (1000 * 60 * 60 * 24))
-        const finalCount = includeBaseDate ? finalDiffDays + 1 : finalDiffDays
-
-        // Calculate date difference for Years, Months, Days
+        // 5. Calculate date difference for summary cards (Years, Months, Days)
         const calculateDateDiff = (d1: Date, d2: Date) => {
-          const adjustedD2 = new Date(d2)
+          const s = new Date(d1 < d2 ? d1 : d2)
+          const e = new Date(d1 < d2 ? d2 : d1)
+          
+          let y = e.getFullYear() - s.getFullYear()
+          let m = e.getMonth() - s.getMonth()
+          let d = e.getDate() - s.getDate()
+
+          if (d < 0) {
+            m--
+            const prevMonth = new Date(e.getFullYear(), e.getMonth(), 0)
+            d += prevMonth.getDate()
+          }
+          if (m < 0) {
+            y--
+            m += 12
+          }
+          
           if (includeBaseDate) {
-            adjustedD2.setDate(adjustedD2.getDate() + 1)
+            d += 1
+            const daysInMonth = new Date(e.getFullYear(), e.getMonth() + 1, 0).getDate()
+            if (d >= daysInMonth) {
+              d = 0
+              m++
+              if (m >= 12) {
+                m = 0
+                y++
+              }
+            }
           }
-
-          let years = adjustedD2.getFullYear() - d1.getFullYear()
-          let months = adjustedD2.getMonth() - d1.getMonth()
-          let days = adjustedD2.getDate() - d1.getDate()
-
-          if (days < 0) {
-            months--
-            const prevMonth = new Date(adjustedD2.getFullYear(), adjustedD2.getMonth(), 0)
-            days += prevMonth.getDate()
-          }
-
-          if (months < 0) {
-            years--
-            months += 12
-          }
-          return { years, months, days }
+          return { years: y, months: m, days: d }
         }
 
-        const diff = calculateDateDiff(start, end)
+        const diff = calculateDateDiff(startRange, endRange)
         setDateDifference(diff)
 
-        // Calculate extra results
-        const totalWeeks = Math.floor(finalCount / 7)
-        const remainingDaysAfterWeeks = finalCount % 7
-        const totalMonths = (diff.years * 12) + diff.months
+        // 6. Calculate summary results based on filtered count
+        const totalDays = filteredTotalCount
+        const totalWeeks = Math.floor(totalDays / 7)
+        const remainingDaysAfterWeeks = totalDays % 7
+        const totalMonthsResult = (diff.years * 12) + diff.months
         const remainingDaysAfterMonths = diff.days
         
-        const startForYears = new Date(start)
-        const endForYears = new Date(start)
-        endForYears.setFullYear(start.getFullYear() + diff.years)
-        const diffTimeYears = Math.abs(end.getTime() - endForYears.getTime())
+        // Calculate remaining days after full years for the Years summary card
+        const startForYears = new Date(startRange)
+        startForYears.setFullYear(startRange.getFullYear() + diff.years)
+        const diffTimeYears = Math.abs(endRange.getTime() - startForYears.getTime())
         const remainingDaysAfterYears = Math.floor(diffTimeYears / (1000 * 60 * 60 * 24)) + (includeBaseDate ? 1 : 0)
         
-        const totalHours = finalCount * 24
+        const totalHours = totalDays * 24
         const totalMinutes = totalHours * 60
         const totalSeconds = totalMinutes * 60
 
         setExtraResults({
           totalWeeks,
           remainingDaysAfterWeeks,
-          totalMonths,
+          totalMonths: totalMonthsResult,
           remainingDaysAfterMonths,
           totalYears: diff.years,
           remainingDaysAfterYears,
           totalHours,
           totalMinutes,
           totalSeconds,
-          totalDays: finalCount
+          totalDays
         })
       }
     } else {
@@ -394,7 +412,7 @@ export default function DateFine() {
       setExtraResults(null)
       setDateDifference(null)
     }
-  }, [baseDate, baseDateDay, baseDateMonth, baseDateYear, yearsToAdd, monthsToAdd, weeksToAdd, daysToAdd, includeBaseDate, baseDateDayError, baseDateMonthError, isAddMode])
+  }, [baseDate, baseDateDay, baseDateMonth, baseDateYear, yearsToAdd, monthsToAdd, weeksToAdd, daysToAdd, includeBaseDate, excludeOption, baseDateDayError, baseDateMonthError, isAddMode])
 
   const handleNumberInput = (value: string, setter: (val: string | number) => void) => {
     const sanitized = value.replace(/\D/g, "")
@@ -445,6 +463,7 @@ export default function DateFine() {
     setExtraResults(null)
     setDateDifference(null)
     setIncludeBaseDate(true)
+    setExcludeOption("all")
     setIsAddMode(true)
   }
 
@@ -631,17 +650,33 @@ export default function DateFine() {
             </div>
           </div>
 
-          {/* Checkbox for include base date */}
-          <div className="flex items-center justify-start gap-2 w-fit">
-            <Checkbox
-              id="include-base-date"
-              checked={includeBaseDate}
-              onCheckedChange={(checked) => setIncludeBaseDate(checked as boolean)}
-              className="w-4 h-4 cursor-pointer border-yellow-500"
-            />
-            <label htmlFor="include-base-date" className="text-xs text-yellow-500 font-medium cursor-pointer select-none">
-              {includeBaseDate ? "Counting: Start date to End date (inclusive)" : "Counting: Start date to End date"}
-            </label>
+          {/* Checkbox and Exclude Dropdown */}
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center justify-start gap-2 w-fit">
+              <Checkbox
+                id="include-base-date"
+                checked={includeBaseDate}
+                onCheckedChange={(checked) => setIncludeBaseDate(checked as boolean)}
+                className="w-4 h-4 cursor-pointer border-yellow-500"
+              />
+              <label htmlFor="include-base-date" className="text-xs text-yellow-500 font-medium cursor-pointer select-none">
+                {includeBaseDate ? "Counting: Start date to End date (inclusive)" : "Counting: Start date to End date"}
+              </label>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Select value={excludeOption} onValueChange={setExcludeOption}>
+                <SelectTrigger className="w-[130px] bg-slate-800/50 border-slate-700 text-cyan-500 h-8 text-xs cursor-pointer">
+                  <SelectValue placeholder="Weekend Exclude" />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-900 border-slate-700 text-cyan-500">
+                  <SelectItem value="all" className="cursor-pointer">All</SelectItem>
+                  <SelectItem value="saturday" className="cursor-pointer">Saturday</SelectItem>
+                  <SelectItem value="sunday" className="cursor-pointer">Sunday</SelectItem>
+                  <SelectItem value="select" className="cursor-pointer">Both (Sat+Sun)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           {resultDate !== "" && (

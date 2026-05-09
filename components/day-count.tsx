@@ -3,6 +3,13 @@
 import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 export default function DayCount() {
   const [startDate, setStartDate] = useState<string>("")
@@ -18,6 +25,7 @@ export default function DayCount() {
   const [endDateDayError, setEndDateDayError] = useState<string>("")
   const [endDateMonthError, setEndDateMonthError] = useState<string>("")
   const [includeEndDate, setIncludeEndDate] = useState<boolean>(true)
+  const [excludeOption, setExcludeOption] = useState<string>("all")
   const [dayCount, setDayCount] = useState<number | null>(null)
   const [dateDifference, setDateDifference] = useState<{ years: number; months: number; days: number } | null>(null)
   const [extraResults, setExtraResults] = useState<{
@@ -438,30 +446,9 @@ export default function DayCount() {
         const diffTime = Math.abs(end.getTime() - start.getTime())
         const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
 
-        const finalCount = includeEndDate ? diffDays + 1 : diffDays
-        setDayCount(finalCount)
-
-        const difference = calculateDateDifference(start, end, includeEndDate)
-        setDateDifference(difference)
-
-        // Calculate extra results
-        const totalWeeks = Math.floor(finalCount / 7)
-        const remainingDaysAfterWeeks = finalCount % 7
-        const totalMonths = (difference.years * 12) + difference.months
-        const remainingDaysAfterMonths = difference.days
+        const initialTotalCount = includeEndDate ? diffDays + 1 : diffDays
         
-        // Calculate remaining days after full years
-        const startForYears = new Date(start)
-        const endForYears = new Date(start)
-        endForYears.setFullYear(start.getFullYear() + difference.years)
-        const diffTimeYears = Math.abs(end.getTime() - endForYears.getTime())
-        const remainingDaysAfterYears = Math.floor(diffTimeYears / (1000 * 60 * 60 * 24)) + (includeEndDate ? 1 : 0)
-        
-        const totalHours = finalCount * 24
-        const totalMinutes = totalHours * 60
-        const totalSeconds = totalMinutes * 60
-
-        // Calculate counts for each day of the week
+        // Calculate counts for each day of the week and final filtered count
         const dayCounts = {
           Sunday: 0,
           Monday: 0,
@@ -478,13 +465,50 @@ export default function DayCount() {
           loopEnd.setDate(loopEnd.getDate() + 1)
         }
 
-        // Iterate through each day and count
+        let filteredTotalCount = 0
         const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+        
         while (current < loopEnd) {
           const dayName = daysOfWeek[current.getDay()] as keyof typeof dayCounts
-          dayCounts[dayName]++
+          const isSaturday = current.getDay() === 6
+          const isSunday = current.getDay() === 0
+          
+          let shouldCount = true
+          if (excludeOption === "saturday" && isSaturday) shouldCount = false
+          if (excludeOption === "sunday" && isSunday) shouldCount = false
+          if (excludeOption === "select" && (isSaturday || isSunday)) shouldCount = false
+
+          if (shouldCount) {
+            dayCounts[dayName]++
+            filteredTotalCount++
+          } else {
+            // Show as negative to indicate skipped
+            dayCounts[dayName]--
+          }
+          
           current.setDate(current.getDate() + 1)
         }
+
+        setDayCount(filteredTotalCount)
+
+        const difference = calculateDateDifference(start, end, includeEndDate)
+        setDateDifference(difference)
+
+        // Calculate extra results based on filtered count
+        const totalWeeks = Math.floor(filteredTotalCount / 7)
+        const remainingDaysAfterWeeks = filteredTotalCount % 7
+        const totalMonths = (difference.years * 12) + difference.months
+        const remainingDaysAfterMonths = difference.days
+        
+        // Calculate remaining days after full years
+        const endForYears = new Date(start)
+        endForYears.setFullYear(start.getFullYear() + difference.years)
+        const diffTimeYears = Math.abs(end.getTime() - endForYears.getTime())
+        const remainingDaysAfterYears = Math.floor(diffTimeYears / (1000 * 60 * 60 * 24)) + (includeEndDate ? 1 : 0)
+        
+        const totalHours = filteredTotalCount * 24
+        const totalMinutes = totalHours * 60
+        const totalSeconds = totalMinutes * 60
 
         setExtraResults({
           totalWeeks,
@@ -504,7 +528,7 @@ export default function DayCount() {
       setDateDifference(null)
       setExtraResults(null)
     }
-  }, [startDate, endDate, startDateDay, startDateMonth, startDateYear, endDateDay, endDateMonth, endDateYear, includeEndDate, startDateDayError, startDateMonthError, endDateDayError, endDateMonthError])
+  }, [startDate, endDate, startDateDay, startDateMonth, startDateYear, endDateDay, endDateMonth, endDateYear, includeEndDate, excludeOption, startDateDayError, startDateMonthError, endDateDayError, endDateMonthError])
 
   const handleClear = () => {
     setIsStartDateTodayChecked(false)
@@ -524,6 +548,7 @@ export default function DayCount() {
     setDateDifference(null)
     setExtraResults(null)
     setIncludeEndDate(true)
+    setExcludeOption("all")
   }
 
   return (
@@ -716,19 +741,35 @@ export default function DayCount() {
             </div>
           </div>
 
-          {/* Checkbox for include end date */}
-          <div className="flex items-center justify-start gap-2 w-fit">
-            <Checkbox
-              id="include-end-date"
-              checked={includeEndDate}
-              onCheckedChange={(checked) => setIncludeEndDate(checked as boolean)}
-              className="w-4 h-4 cursor-pointer border-yellow-500"
-            />
-            <label htmlFor="include-end-date" className="text-xs text-yellow-500 font-medium cursor-pointer select-none">
-              {includeEndDate
-                ? "Counting: Start date to End date (inclusive)"
-                : "Counting: Start date to End date"}
-            </label>
+          {/* Checkbox and Exclude Dropdown */}
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center justify-start gap-2 w-fit">
+              <Checkbox
+                id="include-end-date"
+                checked={includeEndDate}
+                onCheckedChange={(checked) => setIncludeEndDate(checked as boolean)}
+                className="w-4 h-4 cursor-pointer border-yellow-500"
+              />
+              <label htmlFor="include-end-date" className="text-xs text-yellow-500 font-medium cursor-pointer select-none">
+                {includeEndDate
+                  ? "Counting: Start date to End date (inclusive)"
+                  : "Counting: Start date to End date"}
+              </label>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Select value={excludeOption} onValueChange={setExcludeOption}>
+                <SelectTrigger className="w-[130px] bg-slate-800/50 border-slate-700 text-cyan-500 h-8 text-xs cursor-pointer">
+                  <SelectValue placeholder="Weekend Exclude" />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-900 border-slate-700 text-cyan-500">
+                  <SelectItem value="all" className="cursor-pointer">All</SelectItem>
+                  <SelectItem value="saturday" className="cursor-pointer">Saturday</SelectItem>
+                  <SelectItem value="sunday" className="cursor-pointer">Sunday</SelectItem>
+                  <SelectItem value="select" className="cursor-pointer">Both (Sat+Sun)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           {dayCount !== null && dateDifference && (
