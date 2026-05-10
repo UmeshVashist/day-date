@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Inter, JetBrains_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import GlassBackground from "@/components/glass-background"
+import Galaxy from "@/components/galaxy"
 import "./globals.css"
 
 const _inter = Inter({ subsets: ["latin"] })
@@ -16,11 +17,8 @@ export const metadata: Metadata = {
     icon: [
       {
         url: "https://jxechgirxrbrblyrrqmt.supabase.co/storage/v1/object/public/images/bb5b5ced-6b47-425c-aad2-065017342a96/1768574759761-development.png",
-
       },
-
     ],
-
   },
 }
 
@@ -32,6 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className={`font-sans antialiased overflow-x-hidden`}>
+        <Galaxy />
         <GlassBackground>
           {children}
         </GlassBackground>

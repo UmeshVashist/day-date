@@ -154,26 +154,26 @@ export default function Calendar() {
 
   return (
     <div className="w-full">
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-10">
         {/* Year and Month Selectors with Navigation */}
-        <div className="flex flex-col gap-6 items-center py-4">
+        <div className="flex flex-col gap-6 items-center py-6">
           {/* Labels Row */}
-          <div className=" text-center flex justify-center gap-32 text-center">
-            <label className="text-sm font-semibold text-white text-center">Year</label>
-            <label className="text-sm font-semibold text-white text-center">Month</label>
+          <div className="w-full max-w-sm flex justify-between px-10">
+            <label className="text-xs font-black text-[#00e5ff] uppercase tracking-widest opacity-80">Year</label>
+            <label className="text-xs font-black text-[#00e5ff] uppercase tracking-widest opacity-80">Month</label>
           </div>
 
           {/* Selector Boxes Row */}
-          <div className="flex justify-center gap-16">
+          <div className="flex justify-center gap-6 sm:gap-12 w-full">
             {/* Year Selector Box */}
-            <div className="border-2 border-green-500 rounded-lg px-6 py-3 bg-white min-w-[80px]">
+            <div className="border-2 border-white/10 rounded-2xl px-6 py-4 bg-[#71758c]/40 backdrop-blur-md min-w-[140px] shadow-xl focus-within:border-[#00e5ff]/50 transition-all">
               <select
                 value={year}
                 onChange={(e) => setYear(Number.parseInt(e.target.value))}
-                className="w-full text-center font-semibold text-gray-800 bg-transparent border-none focus:outline-none hover:cursor-pointer"
+                className="w-full text-center font-black text-white bg-transparent border-none focus:outline-none hover:cursor-pointer text-xl appearance-none"
               >
                 {getYearOptions().map((y) => (
-                  <option key={y} value={y}>
+                  <option key={y} value={y} className="bg-[#33374b] text-white">
                     {y}
                   </option>
                 ))}
@@ -181,14 +181,14 @@ export default function Calendar() {
             </div>
 
             {/* Month Selector Box */}
-            <div className="border-2 border-green-500 rounded-lg px-6 py-3 bg-white min-w-[80px]">
+            <div className="border-2 border-white/10 rounded-2xl px-6 py-4 bg-[#71758c]/40 backdrop-blur-md min-w-[160px] shadow-xl focus-within:border-[#00e5ff]/50 transition-all">
               <select
                 value={month}
                 onChange={(e) => setMonth(Number.parseInt(e.target.value))}
-                className="w-full  font-semibold text-gray-800 bg-transparent border-none focus:outline-none hover:cursor-pointer"
+                className="w-full text-center font-black text-white bg-transparent border-none focus:outline-none hover:cursor-pointer text-xl appearance-none"
               >
                 {monthNames.map((name, idx) => (
-                  <option key={idx} value={idx}>
+                  <option key={idx} value={idx} className="bg-[#33374b] text-white">
                     {name}
                   </option>
                 ))}
@@ -197,177 +197,91 @@ export default function Calendar() {
           </div>
 
           {/* Navigation Arrows Row */}
-          <div className="flex justify-center gap-32 items-center">
-            {/* Year Navigation Arrows */}
-            <div className="flex gap-4 items-center">
+          <div className="flex justify-center gap-12 sm:gap-24 items-center">
+            <div className="flex gap-4">
               <button
                 onClick={handlePreviousYear}
-                className="p-1 hover:bg-gray-100 rounded-lg transition hover:cursor-pointer"
-                aria-label="Previous year"
+                className="p-3 bg-[#71758c]/20 border border-white/10 rounded-xl text-[#00e5ff] hover:bg-[#71758c]/30 transition-all shadow-lg active:scale-95"
+                title="Previous Year"
               >
-                <ChevronLeft size={20} className="text-green-500 hover:cursor-pointer" />
+                <ChevronLeft className="w-6 h-6 stroke-[3]" />
               </button>
               <button
-                onClick={handleNextYear}
-                className="p-1 hover:bg-gray-100 rounded-lg transition hover:cursor-pointer"
-                aria-label="Next year"
+                onClick={handlePreviousMonth}
+                className="p-3 bg-[#71758c]/20 border border-white/10 rounded-xl text-fuchsia-400 hover:bg-[#71758c]/30 transition-all shadow-lg active:scale-95"
+                title="Previous Month"
               >
-                <ChevronRight size={20} className="text-green-500 hover:cursor-pointer" />
+                <ChevronLeft className="w-6 h-6 stroke-[3]" />
               </button>
             </div>
 
-            {/* Today Button */}
             <button
               onClick={handleToday}
-              className="px-4 py-2 bg-cyan-500 text-white font-semibold rounded-lg hover:bg-cyan-600 transition-all hover:shadow-lg hover:shadow-cyan-600 transition hover:cursor-pointer"
+              className="px-8 py-3 bg-[#00e5ff]/20 border border-[#00e5ff]/30 text-[#00e5ff] font-black rounded-2xl hover:bg-[#00e5ff]/30 transition-all shadow-xl active:scale-95 uppercase tracking-widest text-sm"
             >
               Today
             </button>
 
-            {/* Month Navigation Arrows */}
-            <div className="flex gap-4 items-center">
-              <button
-                onClick={handlePreviousMonth}
-                className="p-1 hover:bg-gray-100 rounded-lg transition hover:cursor-pointer"
-                aria-label="Previous month"
-              >
-                <ChevronLeft size={20} className="text-green-500 hover:cursor-pointer" />
-              </button>
+            <div className="flex gap-4">
               <button
                 onClick={handleNextMonth}
-                className="p-1 hover:bg-gray-100 rounded-lg transition hover:cursor-pointer"
-                aria-label="Next month"
+                className="p-3 bg-[#71758c]/20 border border-white/10 rounded-xl text-fuchsia-400 hover:bg-[#71758c]/30 transition-all shadow-lg active:scale-95"
+                title="Next Month"
               >
-                <ChevronRight size={20} className="text-green-500 hover:cursor-pointer" />
+                <ChevronRight className="w-6 h-6 stroke-[3]" />
+              </button>
+              <button
+                onClick={handleNextYear}
+                className="p-3 bg-[#71758c]/20 border border-white/10 rounded-xl text-[#00e5ff] hover:bg-[#71758c]/30 transition-all shadow-lg active:scale-95"
+                title="Next Year"
+              >
+                <ChevronRight className="w-6 h-6 stroke-[3]" />
               </button>
             </div>
           </div>
         </div>
 
-        {/* Calendar Grid and Side Info */}
-        <div className="flex gap-6">
-          {/* Left Sidebar - Current Month Holiday List */}
-          <div className="hidden lg:flex flex-col gap-2 w-32">
-            <h3 className="text-sm font-bold text-gray-700 text-center">Current month Holiday list</h3>
-            <div className="bg-white rounded-lg p-3 border border-gray-200 max-h-96 overflow-y-auto">
-              {currentMonthData.holidays.length > 0 ? (
-                <ul className="space-y-2">
-                  {currentMonthData.holidays.map((holiday, idx) => (
-                    <li key={idx} className="text-xs text-gray-700 text-center">
-                      <div className="font-medium">{holiday.name}</div>
-                      <div className="text-gray-500">Oct {holiday.date}</div>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-xs text-gray-500 text-center">No holidays</p>
-              )}
-            </div>
-          </div>
+        {/* Calendar Grid */}
+        <div className="bg-[#33374b]/60 backdrop-blur-xl p-6 sm:p-10 rounded-[2.5rem] border border-white/10 shadow-2xl space-y-8">
+          <div className="grid grid-cols-7 gap-1 sm:gap-4">
+            {daysOfWeek.map((day) => (
+              <div key={day} className="text-center font-black text-[#00e5ff] uppercase tracking-widest text-[10px] sm:text-xs opacity-60 pb-2">
+                {day}
+              </div>
+            ))}
+            {calendarDays.map((day, idx) => {
+              const dayOfWeek = idx % 7
+              const isWeekendDay = isWeekend(dayOfWeek)
+              const todayClass = day && isToday(day) ? "bg-[#00e5ff] text-white shadow-[0_0_20px_rgba(0,229,255,0.5)] scale-110" : ""
+              const weekendClass = isWeekendDay ? "text-red-400/80" : "text-white"
+              const hasHoliday = day && holidaysData[year.toString()]?.[month]?.holidays.some((h) => h.date === day)
+              const hasFestival = day && holidaysData[year.toString()]?.[month]?.festivals.some((f) => f.date === day)
 
-          {/* Calendar Grid */}
-          <div className="flex-1 bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-            <h2 className="text-xl font-bold text-center mb-6 text-white">
-              {monthNames[month]} {year}
-            </h2>
-
-            {/* Days of Week Header */}
-            <div className="grid grid-cols-7 gap-2 mb-4">
-              {daysOfWeek.map((day) => (
+              return (
                 <div
-                  key={day}
-                  className={`text-center font-semibold text-sm py-2 ${
-                    day === "Sun" || day === "Sat"
-                      ? "text-red-400"
-                      : "text-white"
-                  }`}
+                  key={idx}
+                  className={`relative aspect-square flex items-center justify-center text-sm sm:text-xl font-black rounded-2xl transition-all ${day ? "cursor-default hover:bg-white/10" : ""} ${todayClass} ${!todayClass && day ? weekendClass : ""}`}
                 >
                   {day}
-                </div>
-              ))}
-            </div>
-
-            {/* Calendar Days */}
-            <div className="grid grid-cols-7 gap-2">
-              {calendarDays.map((day, idx) => {
-                const dayOfWeek = idx % 7
-                const isWeekendDay = isWeekend(dayOfWeek)
-                const isTodayDate = day && isToday(day)
-
-                return (
-                  <div
-                    key={idx}
-                    className={`aspect-square flex items-center justify-center rounded text-sm font-medium transition ${
-                      day === null
-                        ? "bg-transparent"
-                        : isWeekendDay
-                          ? "bg-red-500/30 text-red-400 border border-red-500/60"
-                          : isTodayDate
-                            ? "bg-purple-600 text-white border border-purple-600"
-                            : "bg-white/20 text-white border border-white/40 hover:bg-white/30"
-                    }`}
-                  >
-                    {day}
+                  <div className="absolute bottom-1.5 flex gap-1">
+                    {hasHoliday && <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />}
+                    {hasFestival && <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-pulse" />}
                   </div>
-                )
-              })}
-            </div>
-          </div>
-
-          {/* Right Sidebar - Current Month Festival List */}
-          <div className="hidden lg:flex flex-col gap-2 w-32">
-            <h3 className="text-sm font-bold text-gray-700 text-center">Current month festival list</h3>
-            <div className="bg-white rounded-lg p-3 border border-gray-200 max-h-96 overflow-y-auto">
-              {currentMonthData.festivals.length > 0 ? (
-                <ul className="space-y-2">
-                  {currentMonthData.festivals.map((festival, idx) => (
-                    <li key={idx} className="text-xs text-gray-700 text-center">
-                      <div className="font-medium">{festival.name}</div>
-                      <div className="text-gray-500">Oct {festival.date}</div>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-xs text-gray-500 text-center">No festivals</p>
-              )}
-            </div>
+                </div>
+              )
+            })}
           </div>
         </div>
 
-        {/* Holiday and Festival Section for Mobile */}
-        <div className="lg:hidden bg-white rounded-lg border border-gray-200 p-4">
-          <h3 className="font-semibold text-gray-800 mb-4">Holidays and Festivals</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <h4 className="text-sm font-semibold text-gray-700 mb-2">Holidays</h4>
-              {currentMonthData.holidays.length > 0 ? (
-                <ul className="space-y-2">
-                  {currentMonthData.holidays.map((holiday, idx) => (
-                    <li key={idx} className="text-xs text-gray-700">
-                      <div className="font-medium">{holiday.name}</div>
-                      <div className="text-gray-500">Oct {holiday.date}</div>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-xs text-gray-500">No holidays</p>
-              )}
-            </div>
-            <div>
-              <h4 className="text-sm font-semibold text-gray-700 mb-2">Festivals</h4>
-              {currentMonthData.festivals.length > 0 ? (
-                <ul className="space-y-2">
-                  {currentMonthData.festivals.map((festival, idx) => (
-                    <li key={idx} className="text-xs text-gray-700">
-                      <div className="font-medium">{festival.name}</div>
-                      <div className="text-gray-500">Oct {festival.date}</div>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-xs text-gray-500">No festivals</p>
-              )}
-            </div>
+        {/* Legend */}
+        <div className="flex justify-center gap-8 py-4">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-red-500 rounded-full" />
+            <span className="text-xs font-bold text-white/60 uppercase tracking-wider">Holidays</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-yellow-500 rounded-full" />
+            <span className="text-xs font-bold text-white/60 uppercase tracking-wider">Festivals</span>
           </div>
         </div>
       </div>

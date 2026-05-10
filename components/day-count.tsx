@@ -555,13 +555,13 @@ export default function DayCount() {
     <div className="flex flex-col lg:flex-row gap-6 items-start justify-center">
       {/* Left Sidebar - Day Counts */}
       {dayCount !== null && extraResults && (
-        <div className="w-full lg:w-64 bg-slate-900/40 backdrop-blur-md p-4 rounded-2xl border border-slate-700/50 shadow-xl self-stretch">
-          <p className="text-xs font-bold text-white uppercase tracking-widest mb-4 text-center opacity-80 border-b border-slate-700/50 pb-2">DAYS DISTRIBUTION</p>
-          <div className="flex flex-col gap-1">
+        <div className="w-full lg:w-72 bg-[#33374b]/60 backdrop-blur-xl p-6 rounded-[2rem] border border-white/10 shadow-2xl self-stretch">
+          <p className="text-xs font-bold text-green-500 uppercase tracking-widest mb-6 text-center opacity-80 border-b border-white/10 pb-3">DAYS DISTRIBUTION</p>
+          <div className="flex flex-col gap-2">
             {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map((day) => (
-              <div key={day} className="bg-slate-900/60 p-3 rounded-xl border border-slate-700/30 flex justify-between items-center px-4 transition-all hover:bg-slate-800/60 h-[52px]">
-              <span className="text-sm font-medium text-cyan-500">{day}</span>
-              <span className="text-lg font-normal text-cyan-500">{extraResults.dayCounts[day as keyof typeof extraResults.dayCounts]}</span>
+              <div key={day} className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex justify-between items-center px-6 transition-all hover:bg-[#71758c]/30 h-[60px]">
+              <span className="text-sm font-semibold text-cyan-500">{day}</span>
+              <span className="text-xl font-bold text-[#00e5ff]">{extraResults.dayCounts[day as keyof typeof extraResults.dayCounts]}</span>
             </div>
             ))}
           </div>
@@ -569,12 +569,12 @@ export default function DayCount() {
       )}
 
       {/* Main Content Area */}
-      <div className="flex-1 w-full max-w-2xl space-y-4">
-        <div className="bg-slate-900/40 backdrop-blur-md p-6 rounded-2xl border border-slate-700/50 shadow-xl space-y-4">
+      <div className="flex-1 w-full max-w-2xl space-y-6">
+        <div className="bg-[#33374b]/60 backdrop-blur-xl p-8 rounded-[2rem] border border-white/10 shadow-2xl space-y-6">
           {/* Start Date Input - Separate fields */}
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-semibold text-white">Start Date</label>
+            <div className="flex items-center justify-between mb-3">
+              <label className="block text-sm font-bold text-cyan-500 uppercase tracking-wider ml-1 opacity-90">Start Date</label>
               <div className="flex items-center gap-2 cursor-pointer" onClick={() => {
                 const newChecked = !isStartDateTodayChecked
                 setIsStartDateTodayChecked(newChecked)
@@ -597,15 +597,15 @@ export default function DayCount() {
                   updateStartDate("", "", "")
                 }
               }}>
-                <Checkbox checked={isStartDateTodayChecked} className="w-4 h-4 cursor-pointer border-cyan-500" />
-                <span className="text-xs text-cyan-500 font-medium">Today</span>
+                <Checkbox checked={isStartDateTodayChecked} className="w-4 h-4 cursor-pointer border-[#00e5ff] data-[state=checked]:bg-black" />
+                <span className="text-xs text-cyan-500 font-bold uppercase">Today</span>
               </div>
             </div>
             <div className="flex gap-1 sm:gap-2 items-end flex-wrap sm:flex-nowrap">
               <div className="flex-1 min-w-24">
                 <div className="flex items-center justify-center gap-1 mb-1">
-                  <label className={`text-xs ${startDateDayError ? "text-red-500" : "text-white"}`}>Day</label>
-                  {startDateDayError && <span className="text-xs text-red-500">{startDateDayError}</span>}
+                  <label className={`text-[10px] font-black uppercase tracking-widest ${startDateDayError ? "text-red-400" : "text-white/40"}`}>Day</label>
+                  {startDateDayError && <span className="text-[10px] text-red-400 font-bold">{startDateDayError}</span>}
                 </div>
                 <input
                   ref={startDateDayRef}
@@ -617,13 +617,13 @@ export default function DayCount() {
                   onKeyDown={handleStartDateDayKeyDown}
                   onBlur={handleStartDateDayBlur}
                   maxLength={2}
-                  className={`w-full px-3 py-3 border text-white rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition text-center bg-slate-800/50 ${startDateDayError ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-purple-500"}`}
+                  className={`w-full px-4 py-4 border text-white rounded-2xl focus:outline-none focus:ring-2 focus:border-transparent transition text-center bg-[#71758c]/40 text-xl font-bold shadow-inner ${startDateDayError ? "border-red-500 focus:ring-red-500" : "border-white/10 focus:ring-[#00e5ff]/50"}`}
                 />
               </div>
               <div className="flex-1">
                 <div className="flex items-center justify-center gap-2 mb-1">
-                  <label className={`text-xs ${startDateMonthError ? "text-red-500" : "text-white"}`}>Month</label>
-                  {startDateMonthError && <span className="text-xs text-red-500">{startDateMonthError}</span>}
+                  <label className={`text-[10px] font-black uppercase tracking-widest ${startDateMonthError ? "text-red-400" : "text-white/40"}`}>Month</label>
+                  {startDateMonthError && <span className="text-[10px] text-red-400 font-bold">{startDateMonthError}</span>}
                 </div>
                 <input
                   ref={startDateMonthRef}
@@ -635,11 +635,11 @@ export default function DayCount() {
                   onKeyDown={handleStartDateMonthKeyDown}
                   onBlur={handleStartDateMonthBlur}
                   maxLength={2}
-                  className={`w-full px-3 py-3 border rounded-lg text-white focus:outline-none focus:ring-2 focus:border-transparent transition text-center bg-slate-800/50 ${startDateMonthError ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-purple-500"}`}
+                  className={`w-full px-4 py-4 border rounded-2xl text-white focus:outline-none focus:ring-2 focus:border-transparent transition text-center bg-[#71758c]/40 text-xl font-bold shadow-inner ${startDateMonthError ? "border-red-500 focus:ring-red-500" : "border-white/10 focus:ring-[#00e5ff]/50"}`}
                 />
               </div>
               <div className="flex-1">
-                <label className="block text-xs text-white mb-1 text-center">Year</label>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-white/40 mb-1 text-center">Year</label>
                 <input
                   ref={startDateYearRef}
                   type="text"
@@ -650,7 +650,7 @@ export default function DayCount() {
                   onKeyDown={handleStartDateYearKeyDown}
                   onBlur={handleStartDateYearBlur}
                   maxLength={4}
-                  className="w-full px-3 py-3 border border-gray-300 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition text-center bg-slate-800/50"
+                  className="w-full px-4 py-4 border border-white/10 text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00e5ff]/50 focus:border-transparent transition text-center bg-[#71758c]/40 text-xl font-bold shadow-inner"
                 />
               </div>
             </div>
@@ -658,8 +658,8 @@ export default function DayCount() {
 
           {/* End Date Input - Separate fields */}
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-semibold text-white">End Date</label>
+            <div className="flex items-center justify-between mb-3">
+              <label className="block text-sm font-bold text-cyan-500 uppercase tracking-wider ml-1 opacity-90">End Date</label>
               <div className="flex items-center gap-2 cursor-pointer" onClick={() => {
                 const newChecked = !isEndDateTodayChecked
                 setIsEndDateTodayChecked(newChecked)
@@ -682,15 +682,15 @@ export default function DayCount() {
                   updateEndDate("", "", "")
                 }
               }}>
-                <Checkbox checked={isEndDateTodayChecked} className="w-4 h-4 cursor-pointer border-cyan-500" />
-                <span className="text-xs text-cyan-500 font-medium">Today</span>
+                <Checkbox checked={isEndDateTodayChecked} className="w-4 h-4 cursor-pointer border-[#00e5ff] data-[state=checked]:bg-black" />
+                <span className="text-xs text-[#00e5ff] font-bold uppercase">Today</span>
               </div>
             </div>
-            <div className="flex gap-2 items-end">
-              <div className="flex-1">
-                <div className="flex items-center justify-center gap-2 mb-1">
-                  <label className={`text-xs ${endDateDayError ? "text-red-500" : "text-white"}`}>Day</label>
-                  {endDateDayError && <span className="text-xs text-red-500">{endDateDayError}</span>}
+            <div className="flex gap-1 sm:gap-2 items-end flex-wrap sm:flex-nowrap">
+              <div className="flex-1 min-w-24">
+                <div className="flex items-center justify-center gap-1 mb-1">
+                  <label className={`text-[10px] font-black uppercase tracking-widest ${endDateDayError ? "text-red-400" : "text-white/40"}`}>Day</label>
+                  {endDateDayError && <span className="text-[10px] text-red-400 font-bold">{endDateDayError}</span>}
                 </div>
                 <input
                   ref={endDateDayRef}
@@ -702,13 +702,13 @@ export default function DayCount() {
                   onKeyDown={handleEndDateDayKeyDown}
                   onBlur={handleEndDateDayBlur}
                   maxLength={2}
-                  className={`w-full px-3 py-3 border rounded-lg text-white focus:outline-none focus:ring-2 focus:border-transparent transition text-center bg-slate-800/50 ${endDateDayError ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-purple-500"}`}
+                  className={`w-full px-4 py-4 border text-white rounded-2xl focus:outline-none focus:ring-2 focus:border-transparent transition text-center bg-[#71758c]/40 text-xl font-bold shadow-inner ${endDateDayError ? "border-red-500 focus:ring-red-500" : "border-white/10 focus:ring-[#00e5ff]/50"}`}
                 />
               </div>
               <div className="flex-1">
                 <div className="flex items-center justify-center gap-2 mb-1">
-                  <label className={`text-xs ${endDateMonthError ? "text-red-500" : "text-white"}`}>Month</label>
-                  {endDateMonthError && <span className="text-xs text-red-500">{endDateMonthError}</span>}
+                  <label className={`text-[10px] font-black uppercase tracking-widest ${endDateMonthError ? "text-red-400" : "text-white/40"}`}>Month</label>
+                  {endDateMonthError && <span className="text-[10px] text-red-400 font-bold">{endDateMonthError}</span>}
                 </div>
                 <input
                   ref={endDateMonthRef}
@@ -720,11 +720,11 @@ export default function DayCount() {
                   onKeyDown={handleEndDateMonthKeyDown}
                   onBlur={handleEndDateMonthBlur}
                   maxLength={2}
-                  className={`w-full px-3 py-3 border rounded-lg text-white focus:outline-none focus:ring-2 focus:border-transparent transition text-center bg-slate-800/50 ${endDateMonthError ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-purple-500"}`}
+                  className={`w-full px-4 py-4 border rounded-2xl text-white focus:outline-none focus:ring-2 focus:border-transparent transition text-center bg-[#71758c]/40 text-xl font-bold shadow-inner ${endDateMonthError ? "border-red-500 focus:ring-red-500" : "border-white/10 focus:ring-[#00e5ff]/50"}`}
                 />
               </div>
               <div className="flex-1">
-                <label className="block text-xs text-white mb-1 text-center">Year</label>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-white/40 mb-1 text-center">Year</label>
                 <input
                   ref={endDateYearRef}
                   type="text"
@@ -735,22 +735,22 @@ export default function DayCount() {
                   onKeyDown={handleEndDateYearKeyDown}
                   onBlur={handleEndDateYearBlur}
                   maxLength={4}
-                  className="w-full px-3 py-3 border border-gray-300 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition text-center bg-slate-800/50"
+                  className="w-full px-4 py-4 border border-white/10 text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00e5ff]/50 focus:border-transparent transition text-center bg-[#71758c]/40 text-xl font-bold shadow-inner"
                 />
               </div>
             </div>
           </div>
 
           {/* Checkbox and Exclude Dropdown */}
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center justify-start gap-2 w-fit">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#71758c]/20 p-4 rounded-2xl border border-white/10">
+            <div className="flex items-center justify-start gap-3 w-fit">
               <Checkbox
                 id="include-end-date"
                 checked={includeEndDate}
                 onCheckedChange={(checked) => setIncludeEndDate(checked as boolean)}
-                className="w-4 h-4 cursor-pointer border-yellow-500"
+                className="w-5 h-5 cursor-pointer border-yellow-500 data-[state=checked]:bg-black"
               />
-              <label htmlFor="include-end-date" className="text-xs text-yellow-500 font-medium cursor-pointer select-none">
+              <label htmlFor="include-end-date" className="text-sm text-yellow-500 font-bold cursor-pointer select-none tracking-tight">
                 {includeEndDate
                   ? "Counting: Start date to End date (inclusive)"
                   : "Counting: Start date to End date"}
@@ -759,38 +759,38 @@ export default function DayCount() {
 
             <div className="flex items-center gap-2">
               <Select value={excludeOption} onValueChange={setExcludeOption}>
-                <SelectTrigger className="w-[130px] bg-slate-800/50 border-slate-700 text-cyan-500 h-8 text-xs cursor-pointer">
+                <SelectTrigger className="w-[160px] bg-[#71758c]/40 border-white/10 text-[#00e5ff] h-10 text-sm font-bold rounded-xl cursor-pointer">
                   <SelectValue placeholder="Weekend Exclude" />
                 </SelectTrigger>
-                <SelectContent className="bg-slate-900 border-slate-700 text-cyan-500">
-                  <SelectItem value="all" className="cursor-pointer">All</SelectItem>
-                  <SelectItem value="saturday" className="cursor-pointer">Saturday</SelectItem>
-                  <SelectItem value="sunday" className="cursor-pointer">Sunday</SelectItem>
-                  <SelectItem value="select" className="cursor-pointer">Both (Sat+Sun)</SelectItem>
+                <SelectContent className="bg-[#33374b] border-white/10 text-[#00e5ff] rounded-xl">
+                  <SelectItem value="all" className="cursor-pointer font-semibold">All Days</SelectItem>
+                  <SelectItem value="saturday" className="cursor-pointer font-semibold">No Saturday</SelectItem>
+                  <SelectItem value="sunday" className="cursor-pointer font-semibold">No Sunday</SelectItem>
+                  <SelectItem value="select" className="cursor-pointer font-semibold">No Weekend</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
           {dayCount !== null && dateDifference && (
-            <div className="space-y-3">
-              <div className="bg-slate-900/60 text-cyan-500 rounded-lg overflow-hidden border border-slate-700/50 shadow-2xl">
+            <div className="space-y-4 pt-2">
+              <div className="bg-[#71758c]/20 text-[#00e5ff] rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
                 <div className="grid grid-cols-3 gap-0">
-                  <div className="border-r border-slate-700/50 p-4">
-                    <p className="text-sm font-semibold text-cyan-400 uppercase tracking-wide mb-2 text-center">
+                  <div className="border-r border-white/10 p-6">
+                    <p className="text-xs font-black text-[#00e5ff] uppercase tracking-widest mb-3 text-center opacity-70">
                       YEARS
                     </p>
-                    <p className="text-2xl font-normal text-cyan-500 text-center">{dateDifference.years}</p>
+                    <p className="text-3xl font-black text-cyan-500 text-center tracking-tighter">{dateDifference.years}</p>
                   </div>
-                  <div className="border-r border-slate-700/50 p-4">
-                    <p className="text-sm font-semibold text-cyan-400 uppercase tracking-wide mb-2 text-center">
+                  <div className="border-r border-white/10 p-6">
+                    <p className="text-xs font-black text-[#00e5ff] uppercase tracking-widest mb-3 text-center opacity-70">
                       MONTHS
                     </p>
-                    <p className="text-2xl font-normal text-cyan-500 text-center">{dateDifference.months}</p>
+                    <p className="text-3xl font-black text-cyan-500 text-center tracking-tighter">{dateDifference.months}</p>
                   </div>
-                  <div className="p-4">
-                    <p className="text-sm font-semibold text-cyan-400 uppercase tracking-wide mb-2 text-center">DAYS</p>
-                    <p className="text-2xl font-normal text-cyan-500 text-center">{dateDifference.days}</p>
+                  <div className="p-6">
+                    <p className="text-xs font-black text-[#00e5ff] uppercase tracking-widest mb-3 text-center opacity-70">DAYS</p>
+                    <p className="text-3xl font-black text-cyan-500 text-center tracking-tighter">{dateDifference.days}</p>
                   </div>
                 </div>
               </div>
@@ -801,9 +801,9 @@ export default function DayCount() {
           {(startDateDay || startDateMonth || startDateYear || endDateDay || endDateMonth || endDateYear || dayCount !== null) && (
             <Button
               onClick={handleClear}
-              className="w-full bg-red-500/20 hover:bg-red-500/40 text-red-400 font-medium py-2 rounded-lg transition-all border border-red-500/30 hover:border-red-500/50 cursor-pointer"
+              className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold py-3 rounded-2xl transition-all border border-red-500/20 hover:border-red-500/40 cursor-pointer uppercase tracking-widest text-xs"
             >
-              Clear Fields
+              Clear All Fields
             </Button>
           )}
         </div>
@@ -811,42 +811,43 @@ export default function DayCount() {
 
       {/* Right Sidebar - Extra Results */}
       {dayCount !== null && extraResults && (
-        <div className="w-full lg:w-80 bg-slate-900/40 backdrop-blur-md p-4 rounded-2xl border border-slate-700/50 shadow-xl self-stretch">
-          <div className="grid grid-cols-2 gap-2 mb-2">
-            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-28">
-              <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL DAYS</p>
-              <p className="text-xl font-normal text-cyan-500 text-center">{dayCount}</p>
+        <div className="w-full lg:w-80 bg-[#33374b]/60 backdrop-blur-xl p-6 rounded-[2rem] border border-white/10 shadow-2xl self-stretch space-y-4">
+          <p className="text-xs font-black text-green-500 uppercase tracking-[0.2em] mb-4 text-center opacity-80 border-b border-white/10 pb-3">DETAILED BREAKDOWN</p>
+          <div className="grid grid-cols-2 gap-3 mb-2">
+            <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-28 transition-all hover:bg-[#71758c]/30 group">
+              <p className="text-[10px] font-black text-cyan-500 uppercase tracking-wider mb-2 text-center group-hover:text-[#00e5ff] transition-colors">TOTAL DAYS</p>
+              <p className="text-2xl font-black text-cyan-500 text-center tracking-tighter">{dayCount}</p>
             </div>
-            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-28">
-              <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL WEEKS</p>
-              <p className="text-xl font-normal text-cyan-500 text-center">
-                {extraResults.totalWeeks}<span className="text-xs font-normal text-cyan-400/70 ml-1">w</span> {extraResults.remainingDaysAfterWeeks}<span className="text-xs font-normal text-cyan-400/70 ml-1">d</span>
+            <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-28 transition-all hover:bg-[#71758c]/30 group">
+              <p className="text-[10px] font-black text-cyan-500 uppercase tracking-wider mb-2 text-center group-hover:text-fuchsia-400 transition-colors">TOTAL WEEKS</p>
+              <p className="text-xl font-black text-cyan-500 text-center tracking-tighter">
+                {extraResults.totalWeeks}<span className="text-xs font-bold text-cyan-500 ml-1">w</span> {extraResults.remainingDaysAfterWeeks}<span className="text-xs font-bold text-cyan-500 ml-1">d</span>
               </p>
             </div>
-            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-28">
-              <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL MONTHS</p>
-              <p className="text-xl font-normal text-cyan-500 text-center">
-                {extraResults.totalMonths}<span className="text-xs font-normal text-cyan-400/70 ml-1">m</span> {extraResults.remainingDaysAfterMonths}<span className="text-xs font-normal text-cyan-400/70 ml-1">d</span>
+            <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-28 transition-all hover:bg-[#71758c]/30 group">
+              <p className="text-[10px] font-black text-cyan-500 uppercase tracking-wider mb-2 text-center group-hover:text-[#00e5ff] transition-colors">TOTAL MONTHS</p>
+              <p className="text-xl font-black text-cyan-500 text-center tracking-tighter">
+                {extraResults.totalMonths}<span className="text-xs font-bold text-cyan-500 ml-1">m</span> {extraResults.remainingDaysAfterMonths}<span className="text-xs font-bold text-cyan-500 ml-1">d</span>
               </p>
             </div>
-            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-28">
-              <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL YEARS</p>
-              <p className="text-xl font-normal text-cyan-500 text-center">
-                {extraResults.totalYears}<span className="text-xs font-normal text-cyan-400/70 ml-1">y</span> {extraResults.remainingDaysAfterYears}<span className="text-xs font-normal text-cyan-400/70 ml-1">d</span>
+            <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-28 transition-all hover:bg-[#71758c]/30 group">
+              <p className="text-[10px] font-black text-cyan-500 uppercase tracking-wider mb-2 text-center group-hover:text-fuchsia-400 transition-colors">TOTAL YEARS</p>
+              <p className="text-xl font-black text-cyan-500 text-center tracking-tighter">
+                {extraResults.totalYears}<span className="text-xs font-bold text-cyan-500 ml-1">y</span> {extraResults.remainingDaysAfterYears}<span className="text-xs font-bold text-cyan-500 ml-1">d</span>
               </p>
             </div>
-            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-28">
-              <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL HOURS</p>
-              <p className="text-xl font-normal text-cyan-500 text-center">{extraResults.totalHours.toLocaleString()}</p>
+            <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-28 transition-all hover:bg-[#71758c]/30 group">
+              <p className="text-[10px] font-black text-[#00e5ff]/60 uppercase tracking-wider mb-2 text-center group-hover:text-[#00e5ff] transition-colors">TOTAL HOURS</p>
+              <p className="text-lg font-black text-cyan-500 text-center tracking-tighter">{extraResults.totalHours.toLocaleString()}</p>
             </div>
-            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-28">
-              <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL MINUTES</p>
-              <p className="text-xl font-normal text-cyan-500 text-center">{extraResults.totalMinutes.toLocaleString()}</p>
+            <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-28 transition-all hover:bg-[#71758c]/30 group">
+              <p className="text-[10px] font-black text-cyan-500 uppercase tracking-wider mb-2 text-center group-hover:text-[#00e5ff] transition-colors">TOTAL MINUTES</p>
+              <p className="text-lg font-black text-cyan-500 text-center tracking-tighter">{extraResults.totalMinutes.toLocaleString()}</p>
             </div>
           </div>
-          <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-24">
-            <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL SECONDS</p>
-            <p className="text-xl font-normal text-cyan-500 text-center">{extraResults.totalSeconds.toLocaleString()}</p>
+          <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-24 transition-all hover:bg-[#71758c]/30 group">
+            <p className="text-[10px] font-black text-cyan-500 uppercase tracking-wider mb-2 text-center group-hover:text-[#00e5ff] transition-colors">TOTAL SECONDS</p>
+            <p className="text-xl font-black text-cyan-500 text-center tracking-tighter">{extraResults.totalSeconds.toLocaleString()}</p>
           </div>
         </div>
       )}

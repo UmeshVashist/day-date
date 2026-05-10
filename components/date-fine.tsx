@@ -471,13 +471,13 @@ export default function DateFine() {
     <div className="flex flex-col lg:flex-row gap-6 items-start justify-center">
       {/* Left Sidebar - Day Counts */}
       {resultDate !== "" && dayCounts && (
-        <div className="w-full lg:w-64 bg-slate-900/40 backdrop-blur-md p-4 rounded-2xl border border-slate-700/50 shadow-xl self-stretch">
-          <p className="text-xs font-bold text-white uppercase tracking-widest mb-4 text-center opacity-80 border-b border-slate-700/50 pb-2">DAYS DISTRIBUTION</p>
-          <div className="flex flex-col gap-1">
+        <div className="w-full lg:w-72 bg-[#33374b]/60 backdrop-blur-xl p-6 rounded-[2rem] border border-white/10 shadow-2xl self-stretch">
+          <p className="text-xs font-black text-green-500 uppercase tracking-widest mb-6 text-center opacity-80 border-b border-white/10 pb-3">DAYS DISTRIBUTION</p>
+          <div className="flex flex-col gap-2">
             {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map((day) => (
-              <div key={day} className="bg-slate-900/60 p-3 rounded-xl border border-slate-700/30 flex justify-between items-center px-4 transition-all hover:bg-slate-800/60 h-[52px]">
-              <span className="text-sm font-medium text-cyan-500">{day}</span>
-              <span className="text-lg font-normal text-cyan-500">{dayCounts[day as keyof typeof dayCounts]}</span>
+              <div key={day} className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex justify-between items-center px-6 transition-all hover:bg-[#71758c]/30 h-[60px]">
+              <span className="text-sm font-semibold text-cyan-500">{day}</span>
+              <span className="text-xl font-bold text-[#00e5ff]">{dayCounts[day as keyof typeof dayCounts]}</span>
             </div>
             ))}
           </div>
@@ -485,12 +485,12 @@ export default function DateFine() {
       )}
 
       {/* Main Content Area */}
-      <div className="flex-1 w-full max-w-2xl space-y-4">
-        <div className="bg-slate-900/40 backdrop-blur-md p-6 rounded-2xl border border-slate-700/50 shadow-xl space-y-4">
+      <div className="flex-1 w-full max-w-2xl space-y-6">
+        <div className="bg-[#33374b]/60 backdrop-blur-xl p-8 rounded-[2rem] border border-white/10 shadow-2xl space-y-6">
           {/* Base Date Input - Separate fields */}
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-semibold text-white">Starting Date</label>
+            <div className="flex items-center justify-between mb-3">
+              <label className="block text-sm font-bold text-cyan-500 uppercase tracking-wider ml-1 opacity-90">Starting Date</label>
               <div className="flex items-center gap-2 cursor-pointer" onClick={() => {
                 const newChecked = !isBaseDateTodayChecked
                 setIsBaseDateTodayChecked(newChecked)
@@ -513,15 +513,15 @@ export default function DateFine() {
                   updateBaseDate("", "", "")
                 }
               }}>
-                <Checkbox checked={isBaseDateTodayChecked} className="w-4 h-4 cursor-pointer border-cyan-500" />
-                <span className="text-xs text-cyan-500 font-medium">Today</span>
+                <Checkbox checked={isBaseDateTodayChecked} className="w-4 h-4 cursor-pointer border-[#00e5ff] data-[state=checked]:bg-black" />
+                <span className="text-xs text-[#00e5ff] font-bold uppercase">Today</span>
               </div>
             </div>
             <div className="flex gap-2 items-end">
               <div className="flex-1">
                 <div className="flex items-center justify-center gap-2 mb-1">
-                  <label className={`text-xs ${baseDateDayError ? "text-red-500" : "text-white"}`}>Day</label>
-                  {baseDateDayError && <span className="text-xs text-red-500">{baseDateDayError}</span>}
+                  <label className={`text-[10px] font-black uppercase tracking-widest ${baseDateDayError ? "text-red-400" : "text-white/40"}`}>Day</label>
+                  {baseDateDayError && <span className="text-[10px] text-red-400 font-bold">{baseDateDayError}</span>}
                 </div>
                 <input
                   ref={baseDateDayRef}
@@ -533,13 +533,13 @@ export default function DateFine() {
                   onKeyDown={handleBaseDateDayKeyDown}
                   onBlur={handleBaseDateDayBlur}
                   maxLength={2}
-                  className={`w-full px-3 py-3 border rounded-lg text-white focus:outline-none focus:ring-2 focus:border-transparent transition text-center bg-slate-800/50 ${baseDateDayError ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-purple-500"}`}
+                  className={`w-full px-4 py-4 border rounded-2xl text-white focus:outline-none focus:ring-2 focus:border-transparent transition text-center bg-[#71758c]/40 text-xl font-bold shadow-inner ${baseDateDayError ? "border-red-500 focus:ring-red-500" : "border-white/10 focus:ring-[#00e5ff]/50"}`}
                 />
               </div>
               <div className="flex-1">
                 <div className="flex items-center justify-center gap-2 mb-1">
-                  <label className={`text-xs ${baseDateMonthError ? "text-red-500" : "text-white"}`}>Month</label>
-                  {baseDateMonthError && <span className="text-xs text-red-500">{baseDateMonthError}</span>}
+                  <label className={`text-[10px] font-black uppercase tracking-widest ${baseDateMonthError ? "text-red-400" : "text-white/40"}`}>Month</label>
+                  {baseDateMonthError && <span className="text-[10px] text-red-400 font-bold">{baseDateMonthError}</span>}
                 </div>
                 <input
                   ref={baseDateMonthRef}
@@ -551,11 +551,11 @@ export default function DateFine() {
                   onKeyDown={handleBaseDateMonthKeyDown}
                   onBlur={handleBaseDateMonthBlur}
                   maxLength={2}
-                  className={`w-full px-3 py-3 border rounded-lg text-white focus:outline-none focus:ring-2 focus:border-transparent transition text-center bg-slate-800/50 ${baseDateMonthError ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-purple-500"}`}
+                  className={`w-full px-4 py-4 border rounded-2xl text-white focus:outline-none focus:ring-2 focus:border-transparent transition text-center bg-[#71758c]/40 text-xl font-bold shadow-inner ${baseDateMonthError ? "border-red-500 focus:ring-red-500" : "border-white/10 focus:ring-[#00e5ff]/50"}`}
                 />
               </div>
               <div className="flex-1">
-                <label className="block text-xs text-white mb-1 text-center">Year</label>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-white/40 mb-1 text-center">Year</label>
                 <input
                   ref={baseDateYearRef}
                   type="text"
@@ -566,27 +566,29 @@ export default function DateFine() {
                   onKeyDown={handleBaseDateYearKeyDown}
                   onBlur={handleBaseDateYearBlur}
                   maxLength={4}
-                  className="w-full px-3 py-3 border border-gray-300 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition text-center bg-slate-800/50"
+                  className="w-full px-4 py-4 border border-white/10 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-[#00e5ff]/50 focus:border-transparent transition text-center bg-[#71758c]/40 text-xl font-bold shadow-inner"
                 />
               </div>
             </div>
           </div>
 
           <div>
-            <div className="flex items-center justify-between mb-2">
-                <label className="block text-sm font-semibold text-white">Add to details</label>
-                <div className="text-green-500 font-bold text-sm">
-                  {isAddMode ? "Adding" : "Subtracting"}
-                </div>
-                <div className="flex items-center gap-2 cursor-pointer" onClick={() => setIsAddMode(!isAddMode)}>
-                  <Checkbox checked={isAddMode} className="w-4 h-4 cursor-pointer border-cyan-500" />
-                  <span className="text-xs text-cyan-500 font-medium">Add/Subtract</span>
+            <div className="flex items-center justify-between mb-3">
+                <label className="block text-sm font-bold text-cyan uppercase tracking-wider ml-1 opacity-90">Details</label>
+                <div className="flex items-center gap-4">
+                  <div className={`font-black text-sm uppercase tracking-widest ${isAddMode ? "text-green-400" : "text-red-400"}`}>
+                    {isAddMode ? "Adding" : "Subtracting"}
+                  </div>
+                  <div className="flex items-center gap-2 cursor-pointer" onClick={() => setIsAddMode(!isAddMode)}>
+                    <Checkbox checked={isAddMode} className="w-4 h-4 cursor-pointer border-[#00e5ff] data-[state=checked]:bg-black" />
+                    <span className="text-xs text-[#00e5ff] font-bold uppercase">Add/Subtract</span>
+                  </div>
                 </div>
               </div>
             <div className="grid grid-cols-4 gap-3">
               {/* Years Input */}
               <div>
-                <label className="block text-xs font-medium text-white mb-2 text-center">Year</label>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-white/40 mb-2 text-center">Year</label>
                 <input
                   ref={yearsToAddRef}
                   type="number"
@@ -596,13 +598,13 @@ export default function DateFine() {
                   onChange={(e) => handleNumberInput(e.target.value, setYearsToAdd)}
                   onKeyDown={handleYearsToAddKeyDown}
                   min="0"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition hover:cursor-pointer text-center bg-slate-800/50"
+                  className="w-full px-4 py-4 border border-white/10 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-[#00e5ff]/50 focus:border-transparent transition hover:cursor-pointer text-center bg-[#71758c]/40 text-xl font-bold shadow-inner"
                 />
               </div>
 
               {/* Months Input */}
               <div>
-                <label className="block text-xs font-medium text-white mb-2 text-center">Month</label>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-white/40 mb-2 text-center">Month</label>
                 <input
                   ref={monthsToAddRef}
                   type="number"
@@ -612,13 +614,13 @@ export default function DateFine() {
                   onChange={(e) => handleNumberInput(e.target.value, setMonthsToAdd)}
                   onKeyDown={handleMonthsToAddKeyDown}
                   min="0"
-                  className="w-full px-4 py-3 border border-gray-300 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition hover:cursor-pointer text-center bg-slate-800/50"
+                  className="w-full px-4 py-4 border border-white/10 text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00e5ff]/50 focus:border-transparent transition hover:cursor-pointer text-center bg-[#71758c]/40 text-xl font-bold shadow-inner"
                 />
               </div>
 
               {/* Weeks Input */}
               <div>
-                <label className="block text-xs font-medium text-white mb-2 text-center">Weeks</label>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-white/40 mb-2 text-center">Weeks</label>
                 <input
                   ref={weeksToAddRef}
                   type="number"
@@ -628,13 +630,13 @@ export default function DateFine() {
                   onChange={(e) => handleNumberInput(e.target.value, setWeeksToAdd)}
                   onKeyDown={handleWeeksToAddKeyDown}
                   min="0"
-                  className="w-full px-4 py-3 border border-gray-300 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition hover:cursor-pointer text-center bg-slate-800/50"
+                  className="w-full px-4 py-4 border border-white/10 text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00e5ff]/50 focus:border-transparent transition hover:cursor-pointer text-center bg-[#71758c]/40 text-xl font-bold shadow-inner"
                 />
               </div>
 
               {/* Days Input */}
               <div>
-                <label className="block text-xs font-medium text-white mb-2 text-center">Days</label>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-white/40 mb-2 text-center">Days</label>
                 <input
                   ref={daysToAddRef}
                   type="number"
@@ -644,56 +646,56 @@ export default function DateFine() {
                   onChange={(e) => handleNumberInput(e.target.value, setDaysToAdd)}
                   onKeyDown={handleDaysToAddKeyDown}
                   min="0"
-                  className="w-full px-4 py-3 border border-gray-300 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition hover:cursor-pointer text-center bg-slate-800/50"
+                  className="w-full px-4 py-4 border border-white/10 text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00e5ff]/50 focus:border-transparent transition hover:cursor-pointer text-center bg-[#71758c]/40 text-xl font-bold shadow-inner"
                 />
               </div>
             </div>
           </div>
 
           {/* Checkbox and Exclude Dropdown */}
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center justify-start gap-2 w-fit">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#71758c]/20 p-4 rounded-2xl border border-white/10">
+            <div className="flex items-center justify-start gap-3 w-fit">
               <Checkbox
                 id="include-base-date"
                 checked={includeBaseDate}
                 onCheckedChange={(checked) => setIncludeBaseDate(checked as boolean)}
-                className="w-4 h-4 cursor-pointer border-yellow-500"
+                className="w-5 h-5 cursor-pointer border-yellow-500 data-[state=checked]:bg-black"
               />
-              <label htmlFor="include-base-date" className="text-xs text-yellow-500 font-medium cursor-pointer select-none">
+              <label htmlFor="include-base-date" className="text-sm text-yellow-500 font-bold cursor-pointer select-none tracking-tight">
                 {includeBaseDate ? "Counting: Start date to End date (inclusive)" : "Counting: Start date to End date"}
               </label>
             </div>
 
             <div className="flex items-center gap-2">
               <Select value={excludeOption} onValueChange={setExcludeOption}>
-                <SelectTrigger className="w-[130px] bg-slate-800/50 border-slate-700 text-cyan-500 h-8 text-xs cursor-pointer">
+                <SelectTrigger className="w-[160px] bg-[#71758c]/40 border-white/10 text-[#00e5ff] h-10 text-sm font-bold rounded-xl cursor-pointer">
                   <SelectValue placeholder="Weekend Exclude" />
                 </SelectTrigger>
-                <SelectContent className="bg-slate-900 border-slate-700 text-cyan-500">
-                  <SelectItem value="all" className="cursor-pointer">All</SelectItem>
-                  <SelectItem value="saturday" className="cursor-pointer">Saturday</SelectItem>
-                  <SelectItem value="sunday" className="cursor-pointer">Sunday</SelectItem>
-                  <SelectItem value="select" className="cursor-pointer">Both (Sat+Sun)</SelectItem>
+                <SelectContent className="bg-[#33374b] border-white/10 text-[#00e5ff] rounded-xl">
+                  <SelectItem value="all" className="cursor-pointer font-semibold">All Days</SelectItem>
+                  <SelectItem value="saturday" className="cursor-pointer font-semibold">No Saturday</SelectItem>
+                  <SelectItem value="sunday" className="cursor-pointer font-semibold">No Sunday</SelectItem>
+                  <SelectItem value="select" className="cursor-pointer font-semibold">No Weekend</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
           {resultDate !== "" && (
-            <div className="space-y-3">
-              <div className="bg-slate-900/60 text-cyan-500 rounded-lg overflow-hidden border border-slate-700/50 shadow-2xl">
+            <div className="space-y-4 pt-2">
+              <div className="bg-[#71758c]/20 text-[#00e5ff] rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
                 <div className="grid grid-cols-2 gap-0">
-                  <div className="border-r border-slate-700/50 p-4">
-                    <p className="text-sm font-semibold text-cyan-400 uppercase tracking-wide mb-2 text-center">
+                  <div className="border-r border-white/10 p-6">
+                    <p className="text-xs font-black text-[#00e5ff] uppercase tracking-widest mb-3 text-center opacity-70">
                       RESULT DATE
                     </p>
-                    <p className="text-xl font-normal text-cyan-500 text-center">{resultDate}</p>
+                    <p className="text-2xl font-black text-cyan-500 text-center tracking-tighter">{resultDate}</p>
                   </div>
-                  <div className="p-4">
-                    <p className="text-sm font-semibold text-cyan-400 uppercase tracking-wide mb-2 text-center">
+                  <div className="p-6">
+                    <p className="text-xs font-black text-[#00e5ff] uppercase tracking-widest mb-3 text-center opacity-70">
                       {isAddMode ? "TOTAL ADDED" : "TOTAL SUBTRACTED"}
                     </p>
-                    <p className="text-xl font-normal text-cyan-500 text-center">
+                    <p className="text-2xl font-black text-cyan-500 text-center tracking-tighter">
                       {yearsToAdd || 0}Y {monthsToAdd || 0}M {weeksToAdd || 0}W {daysToAdd || 0}D
                     </p>
                   </div>
@@ -706,9 +708,9 @@ export default function DateFine() {
           {(baseDateDay || baseDateMonth || baseDateYear || yearsToAdd || monthsToAdd || weeksToAdd || daysToAdd || resultDate) && (
             <Button
               onClick={handleClear}
-              className="w-full bg-red-500/20 hover:bg-red-500/40 text-red-400 font-medium py-2 rounded-lg transition-all border border-red-500/30 hover:border-red-500/50 cursor-pointer"
+              className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold py-3 rounded-2xl transition-all border border-red-500/20 hover:border-red-500/40 cursor-pointer uppercase tracking-widest text-xs"
             >
-              Clear Fields
+              Clear All Fields
             </Button>
           )}
         </div>
@@ -716,42 +718,43 @@ export default function DateFine() {
 
       {/* Right Sidebar - Extra Results */}
       {resultDate !== "" && extraResults && (
-        <div className="w-full lg:w-80 bg-slate-900/40 backdrop-blur-md p-4 rounded-2xl border border-slate-700/50 shadow-xl self-stretch">
-          <div className="grid grid-cols-2 gap-2 mb-2">
-            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-28">
-              <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL DAYS</p>
-              <p className="text-xl font-normal text-cyan-500 text-center">{extraResults.totalDays}</p>
+        <div className="w-full lg:w-80 bg-[#33374b]/60 backdrop-blur-xl p-6 rounded-[2rem] border border-white/10 shadow-2xl self-stretch space-y-4">
+          <p className="text-xs font-black text-green-500 uppercase tracking-[0.2em] mb-4 text-center opacity-80 border-b border-white/10 pb-3">DETAILED BREAKDOWN</p>
+          <div className="grid grid-cols-2 gap-3 mb-2">
+            <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-28 transition-all hover:bg-[#71758c]/30 group">
+              <p className="text-[10px] font-black text-cyan-500 uppercase tracking-wider mb-2 text-center group-hover:text-[#00e5ff] transition-colors">TOTAL DAYS</p>
+              <p className="text-2xl font-black text-cyan-500 text-center tracking-tighter">{extraResults.totalDays}</p>
             </div>
-            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-28">
-              <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL WEEKS</p>
-              <p className="text-xl font-normal text-cyan-500 text-center">
-                {extraResults.totalWeeks}<span className="text-xs font-normal text-cyan-400/70 ml-1">w</span> {extraResults.remainingDaysAfterWeeks}<span className="text-xs font-normal text-cyan-400/70 ml-1">d</span>
+            <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-28 transition-all hover:bg-[#71758c]/30 group">
+              <p className="text-[10px] font-black text-cyan-500 uppercase tracking-wider mb-2 text-center group-hover:text-fuchsia-400 transition-colors">TOTAL WEEKS</p>
+              <p className="text-xl font-black text-cyan-5500 text-center tracking-tighter">
+                {extraResults.totalWeeks}<span className="text-xs font-bold text-cyan-500 ml-1">w</span> {extraResults.remainingDaysAfterWeeks}<span className="text-xs font-bold text-cyan-500 ml-1">d</span>
               </p>
             </div>
-            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-28">
-              <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL MONTHS</p>
-              <p className="text-xl font-normal text-cyan-500 text-center">
-                {extraResults.totalMonths}<span className="text-xs font-normal text-cyan-400/70 ml-1">m</span> {extraResults.remainingDaysAfterMonths}<span className="text-xs font-normal text-cyan-400/70 ml-1">d</span>
+            <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-28 transition-all hover:bg-[#71758c]/30 group">
+              <p className="text-[10px] font-black text-cyan-500 uppercase tracking-wider mb-2 text-center group-hover:text-[#00e5ff] transition-colors">TOTAL MONTHS</p>
+              <p className="text-xl font-black text-cyan-500 text-center tracking-tighter">
+                {extraResults.totalMonths}<span className="text-xs font-bold text-cyan-500 ml-1">m</span> {extraResults.remainingDaysAfterMonths}<span className="text-xs font-bold text-cyan-500 ml-1">d</span>
               </p>
             </div>
-            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-28">
-              <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL YEARS</p>
-              <p className="text-xl font-normal text-cyan-500 text-center">
-                {extraResults.totalYears}<span className="text-xs font-normal text-cyan-400/70 ml-1">y</span> {extraResults.remainingDaysAfterYears}<span className="text-xs font-normal text-cyan-400/70 ml-1">d</span>
+            <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-28 transition-all hover:bg-[#71758c]/30 group">
+              <p className="text-[10px] font-black text-cyan-500 uppercase tracking-wider mb-2 text-center group-hover:text-fuchsia-400 transition-colors">TOTAL YEARS</p>
+              <p className="text-xl font-black text-cyan-500 text-center tracking-tighter">
+                {extraResults.totalYears}<span className="text-xs font-bold text-cyan-500 ml-1">y</span> {extraResults.remainingDaysAfterYears}<span className="text-xs font-bold text-cyan-500 ml-1">d</span>
               </p>
             </div>
-            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-28">
-              <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL HOURS</p>
-              <p className="text-xl font-normal text-cyan-500 text-center">{extraResults.totalHours.toLocaleString()}</p>
+            <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-28 transition-all hover:bg-[#71758c]/30 group">
+              <p className="text-[10px] font-black text-cyan-500 uppercase tracking-wider mb-2 text-center group-hover:text-[#00e5ff] transition-colors">TOTAL HOURS</p>
+              <p className="text-lg font-black text-cyan-500 text-center tracking-tighter">{extraResults.totalHours.toLocaleString()}</p>
             </div>
-            <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-28">
-              <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL MINUTES</p>
-              <p className="text-xl font-normal text-cyan-500 text-center">{extraResults.totalMinutes.toLocaleString()}</p>
+            <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-28 transition-all hover:bg-[#71758c]/30 group">
+              <p className="text-[10px] font-black text-cyan-500 uppercase tracking-wider mb-2 text-center group-hover:text-fuchsia-400 transition-colors">TOTAL MINUTES</p>
+              <p className="text-lg font-black text-cyan-500 text-center tracking-tighter">{extraResults.totalMinutes.toLocaleString()}</p>
             </div>
           </div>
-          <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/30 flex flex-col justify-center items-center h-24">
-            <p className="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider mb-2 text-center">TOTAL SECONDS</p>
-            <p className="text-xl font-normal text-cyan-500 text-center">{extraResults.totalSeconds.toLocaleString()}</p>
+          <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-24 transition-all hover:bg-[#71758c]/30 group">
+            <p className="text-[10px] font-black text-cyan-500 uppercase tracking-wider mb-2 text-center group-hover:text-[#00e5ff] transition-colors">TOTAL SECONDS</p>
+            <p className="text-xl font-black text-cyan-500 text-center tracking-tighter">{extraResults.totalSeconds.toLocaleString()}</p>
           </div>
         </div>
       )}
