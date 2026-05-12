@@ -170,28 +170,28 @@ export default function DaysConvert() {
             
             <div className="bg-[#71758c]/20 text-[#00e5ff] rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
               <div className="grid grid-cols-3 gap-0">
-                <div className="border-r border-white/10 p-6">
-                  <p className="text-[10px] font-black text-cyan-500 uppercase tracking-widest mb-3 text-center">
+                <div className="border-r border-white/10 p-6 group cursor-default transition-all hover:bg-white/5">
+                  <p className="text-[10px] font-black text-[#00e5ff]/60 uppercase tracking-widest mb-3 text-center group-hover:text-yellow-400 transition-colors">
                     Years
                   </p>
-                  <p className="text-3xl font-black text-cyan-500 text-center tracking-tighter">{resultYears || 0}</p>
+                  <p className="text-4xl font-black text-cyan-500 text-center tracking-tighter group-hover:text-yellow-400 transition-colors">{resultYears || 0}</p>
                 </div>
-                <div className="border-r border-white/10 p-6">
-                  <p className="text-[10px] font-black text-cyan-500 uppercase tracking-widest mb-3 text-center">
+                <div className="border-r border-white/10 p-6 group cursor-default transition-all hover:bg-white/5">
+                  <p className="text-[10px] font-black text-[#00e5ff]/60 uppercase tracking-widest mb-3 text-center group-hover:text-yellow-400 transition-colors">
                     Months
                   </p>
-                  <p className="text-3xl font-black text-cyan-500 text-center tracking-tighter">{resultMonths || 0}</p>
+                  <p className="text-4xl font-black text-cyan-500 text-center tracking-tighter group-hover:text-yellow-400 transition-colors">{resultMonths || 0}</p>
                 </div>
-                <div className="p-6">
-                  <p className="text-[10px] font-black text-cyan-500 uppercase tracking-widest mb-3 text-center">Days</p>
-                  <p className="text-3xl font-black text-cyan-500 text-center tracking-tighter">{resultDays || 0}</p>
+                <div className="p-6 group cursor-default transition-all hover:bg-white/5">
+                  <p className="text-[10px] font-black text-[#00e5ff]/60 uppercase tracking-widest mb-3 text-center group-hover:text-yellow-400 transition-colors">Days</p>
+                  <p className="text-4xl font-black text-cyan-500 text-center tracking-tighter group-hover:text-yellow-400 transition-colors">{resultDays || 0}</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-[#71758c]/20 p-8 rounded-3xl border border-white/10 shadow-2xl flex flex-col items-center justify-center group transition-all hover:bg-[#71758c]/30">
-              <p className="text-xs font-black text-cyan-500 uppercase tracking-[0.4em] mb-3 group-hover:text-fuchsia-400 transition-colors">Total Accumulated Days</p>
-              <p className="text-3xl font-black text-cyan-500 tracking-tighter drop-shadow-[0_0_15px_rgba(232,121,249,0.3)]">{resultTotalDays || 0}</p>
+            <div className="bg-[#71758c]/20 p-8 rounded-3xl border border-white/10 shadow-2xl flex flex-col items-center justify-center group transition-all hover:bg-[#71758c]/30 cursor-default">
+              <p className="text-xs font-black text-cyan-500 uppercase tracking-[0.4em] mb-3 group-hover:text-yellow-400 transition-colors">Total Accumulated Days</p>
+              <p className="text-4xl font-black text-cyan-500 tracking-tighter drop-shadow-[0_0_15px_rgba(232,121,249,0.3)] group-hover:text-yellow-400 transition-colors">{resultTotalDays || 0}</p>
             </div>
           </div>
         )}

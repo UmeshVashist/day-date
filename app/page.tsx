@@ -193,7 +193,7 @@ export default function Home() {
                 
                 <Button 
                   onClick={handleClear}
-                  className="bg-[#9d00ff] hover:bg-[#b333ff] hover:cursor-pointer text-white font-black px-5 h-10 rounded-lg transition-all shadow-lg shadow-purple-900/40 relative z-50 text-[10px] tracking-widest uppercase active:scale-95"
+                  className="bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-400 font-bold py-3 rounded-2xl transition-all border border-yellow-500/20 hover:border-yellow-500/40 cursor-pointer font-black px-5 h-10 rounded-lg transition-all shadow-lg shadow-purple-900/40 relative z-50 text-[10px] tracking-widest uppercase active:scale-95"
                 >
                   Clear
                 </Button>
@@ -225,7 +225,7 @@ export default function Home() {
 
       {/* Version Footer */}
       <div className="fixed bottom-4 left-4">
-        <span className="bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-400 drop-shadow-sm font-bold text-sm">version 1.5</span>
+        <span className="bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-400 drop-shadow-sm font-bold text-sm">version 1.6</span>
       </div>
     </div>
   )

@@ -559,9 +559,9 @@ export default function DayCount() {
           <p className="text-xs font-bold text-green-500 uppercase tracking-widest mb-6 text-center opacity-80 border-b border-white/10 pb-3">DAYS DISTRIBUTION</p>
           <div className="flex flex-col gap-2">
             {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map((day) => (
-              <div key={day} className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex justify-between items-center px-6 transition-all hover:bg-[#71758c]/30 h-[60px]">
-              <span className="text-sm font-semibold text-cyan-500">{day}</span>
-              <span className="text-xl font-bold text-[#00e5ff]">{extraResults.dayCounts[day as keyof typeof extraResults.dayCounts]}</span>
+              <div key={day} className="bg-[#71758c]/20 transition-colors p-4 rounded-2xl border border-white/10 flex justify-between items-center px-6 transition-all hover:bg-[#71758c]/30 h-[60px] group">
+              <span className="text-sm font-semibold text-cyan-500 group-hover:text-yellow-400 transition-colors">{day}</span>
+              <span className="text-xl font-bold text-[#00e5ff] group-hover:text-yellow-400 transition-colors">{extraResults.dayCounts[day as keyof typeof extraResults.dayCounts]}</span>
             </div>
             ))}
           </div>
@@ -763,10 +763,10 @@ export default function DayCount() {
                   <SelectValue placeholder="Weekend Exclude" />
                 </SelectTrigger>
                 <SelectContent className="bg-[#33374b] border-white/10 text-[#00e5ff] rounded-xl">
-                  <SelectItem value="all" className="cursor-pointer font-semibold">All Days</SelectItem>
-                  <SelectItem value="saturday" className="cursor-pointer font-semibold">No Saturday</SelectItem>
-                  <SelectItem value="sunday" className="cursor-pointer font-semibold">No Sunday</SelectItem>
-                  <SelectItem value="select" className="cursor-pointer font-semibold">No Weekend</SelectItem>
+                  <SelectItem value="all" className="cursor-pointer font-semibold hover:text-yellow-400">All Days</SelectItem>
+                  <SelectItem value="saturday" className="cursor-pointer font-semibold hover:text-yellow-400">No Saturday</SelectItem>
+                  <SelectItem value="sunday" className="cursor-pointer font-semibold hover:text-yellow-400">No Sunday</SelectItem>
+                  <SelectItem value="select" className="cursor-pointer font-semibold hover:text-yellow-400">No Weekend</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -776,21 +776,21 @@ export default function DayCount() {
             <div className="space-y-4 pt-2">
               <div className="bg-[#71758c]/20 text-[#00e5ff] rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
                 <div className="grid grid-cols-3 gap-0">
-                  <div className="border-r border-white/10 p-6">
-                    <p className="text-xs font-black text-[#00e5ff] uppercase tracking-widest mb-3 text-center opacity-70">
+                  <div className="border-r border-white/10 p-6 group cursor-default transition-colors hover:bg-white/5">
+                    <p className="text-xs font-black text-cyan-500 group-hover:text-yellow-400 transition-colors uppercase tracking-widest mb-3 text-center opacity-70">
                       YEARS
                     </p>
-                    <p className="text-3xl font-black text-cyan-500 text-center tracking-tighter">{dateDifference.years}</p>
+                    <p className="text-4xl font-black text-cyan-500 group-hover:text-yellow-400 transition-colors text-center tracking-tighter">{dateDifference.years}</p>
                   </div>
-                  <div className="border-r border-white/10 p-6">
-                    <p className="text-xs font-black text-[#00e5ff] uppercase tracking-widest mb-3 text-center opacity-70">
+                  <div className="border-r border-white/10 p-6 group cursor-default transition-colors hover:bg-white/5">
+                    <p className="text-xs font-black text-cyan-500 group-hover:text-yellow-400 transition-colors uppercase tracking-widest mb-3 text-center opacity-70">
                       MONTHS
                     </p>
-                    <p className="text-3xl font-black text-cyan-500 text-center tracking-tighter">{dateDifference.months}</p>
+                    <p className="text-4xl font-black text-cyan-500 group-hover:text-yellow-400 transition-colors text-center tracking-tighter">{dateDifference.months}</p>
                   </div>
-                  <div className="p-6">
-                    <p className="text-xs font-black text-[#00e5ff] uppercase tracking-widest mb-3 text-center opacity-70">DAYS</p>
-                    <p className="text-3xl font-black text-cyan-500 text-center tracking-tighter">{dateDifference.days}</p>
+                  <div className="p-6 group cursor-default transition-colors hover:bg-white/5">
+                    <p className="text-xs font-black text-cyan-500 group-hover:text-yellow-400 transition-colors uppercase tracking-widest mb-3 text-center opacity-70">DAYS</p>
+                    <p className="text-4xl font-black text-cyan-500 group-hover:text-yellow-400 transition-colors text-center tracking-tighter">{dateDifference.days}</p>
                   </div>
                 </div>
               </div>
@@ -814,43 +814,44 @@ export default function DayCount() {
         <div className="w-full lg:w-80 bg-[#33374b]/60 backdrop-blur-xl p-6 rounded-[2rem] border border-white/10 shadow-2xl self-stretch space-y-4">
           <p className="text-xs font-black text-green-500 uppercase tracking-[0.2em] mb-4 text-center opacity-80 border-b border-white/10 pb-3">DETAILED BREAKDOWN</p>
           <div className="grid grid-cols-2 gap-3 mb-2">
-            <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-28 transition-all hover:bg-[#71758c]/30 group">
-              <p className="text-[10px] font-black text-cyan-500 uppercase tracking-wider mb-2 text-center group-hover:text-[#00e5ff] transition-colors">TOTAL DAYS</p>
-              <p className="text-2xl font-black text-cyan-500 text-center tracking-tighter">{dayCount}</p>
+            <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-28 transition-all hover:bg-[#71758c]/30 group cursor-default">
+              <p className="text-[10px] font-black text-[#00e5ff]/60 uppercase tracking-wider mb-2 text-center group-hover:text-yellow-400 transition-colors">TOTAL DAYS</p>
+              <p className="text-2xl font-black text-cyan-500 text-center tracking-tighter group-hover:text-yellow-400 transition-colors">{dayCount}</p>
             </div>
-            <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-28 transition-all hover:bg-[#71758c]/30 group">
-              <p className="text-[10px] font-black text-cyan-500 uppercase tracking-wider mb-2 text-center group-hover:text-fuchsia-400 transition-colors">TOTAL WEEKS</p>
-              <p className="text-xl font-black text-cyan-500 text-center tracking-tighter">
-                {extraResults.totalWeeks}<span className="text-xs font-bold text-cyan-500 ml-1">w</span> {extraResults.remainingDaysAfterWeeks}<span className="text-xs font-bold text-cyan-500 ml-1">d</span>
+            <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-28 transition-all hover:bg-[#71758c]/30 group cursor-default">
+              <p className="text-[10px] font-black text-[#00e5ff]/60 uppercase tracking-wider mb-2 text-center group-hover:text-yellow-400 transition-colors">TOTAL WEEKS</p>
+              <p className="text-xl font-black text-cyan-500 text-center tracking-tighter group-hover:text-yellow-400 transition-colors">
+                {extraResults.totalWeeks}<span className="text-xs font-bold text-cyan-500 ml-1 group-hover:text-cyan-400/60 transition-colors">w</span> {extraResults.remainingDaysAfterWeeks}<span className="text-xs font-bold text-cyan-500 ml-1 group-hover:text-cyan-400/60 transition-colors">d</span>
               </p>
             </div>
-            <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-28 transition-all hover:bg-[#71758c]/30 group">
-              <p className="text-[10px] font-black text-cyan-500 uppercase tracking-wider mb-2 text-center group-hover:text-[#00e5ff] transition-colors">TOTAL MONTHS</p>
-              <p className="text-xl font-black text-cyan-500 text-center tracking-tighter">
-                {extraResults.totalMonths}<span className="text-xs font-bold text-cyan-500 ml-1">m</span> {extraResults.remainingDaysAfterMonths}<span className="text-xs font-bold text-cyan-500 ml-1">d</span>
+            <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-28 transition-all hover:bg-[#71758c]/30 group cursor-default">
+              <p className="text-[10px] font-black text-[#00e5ff]/60 uppercase tracking-wider mb-2 text-center group-hover:text-yellow-400 transition-colors">TOTAL MONTHS</p>
+              <p className="text-xl font-black text-cyan-500 text-center tracking-tighter group-hover:text-yellow-400 transition-colors">
+                {extraResults.totalMonths}<span className="text-xs font-bold text-cyan-500 ml-1 group-hover:text-cyan-400/60 transition-colors">m</span> {extraResults.remainingDaysAfterMonths}<span className="text-xs font-bold text-cyan-500 ml-1 group-hover:text-cyan-400/60 transition-colors">d</span>
               </p>
             </div>
-            <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-28 transition-all hover:bg-[#71758c]/30 group">
-              <p className="text-[10px] font-black text-cyan-500 uppercase tracking-wider mb-2 text-center group-hover:text-fuchsia-400 transition-colors">TOTAL YEARS</p>
-              <p className="text-xl font-black text-cyan-500 text-center tracking-tighter">
-                {extraResults.totalYears}<span className="text-xs font-bold text-cyan-500 ml-1">y</span> {extraResults.remainingDaysAfterYears}<span className="text-xs font-bold text-cyan-500 ml-1">d</span>
+            <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-28 transition-all hover:bg-[#71758c]/30 group cursor-default">
+              <p className="text-[10px] font-black text-[#00e5ff]/60 uppercase tracking-wider mb-2 text-center group-hover:text-yellow-400 transition-colors">TOTAL YEARS</p>
+              <p className="text-xl font-black text-cyan-500 text-center tracking-tighter group-hover:text-yellow-400 transition-colors">
+                {extraResults.totalYears}<span className="text-xs font-bold text-cyan-500 ml-1 group-hover:text-cyan-400/60 transition-colors">y</span> {extraResults.remainingDaysAfterYears}<span className="text-xs font-bold text-cyan-500 ml-1 group-hover:text-cyan-400/60 transition-colors">d</span>
               </p>
             </div>
-            <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-28 transition-all hover:bg-[#71758c]/30 group">
-              <p className="text-[10px] font-black text-[#00e5ff]/60 uppercase tracking-wider mb-2 text-center group-hover:text-[#00e5ff] transition-colors">TOTAL HOURS</p>
-              <p className="text-lg font-black text-cyan-500 text-center tracking-tighter">{extraResults.totalHours.toLocaleString()}</p>
+            <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-28 transition-all hover:bg-[#71758c]/30 group cursor-default">
+              <p className="text-[10px] font-black text-[#00e5ff]/60 uppercase tracking-wider mb-2 text-center group-hover:text-yellow-400 transition-colors">TOTAL HOURS</p>
+              <p className="text-lg font-black text-cyan-500 text-center tracking-tighter group-hover:text-yellow-400 transition-colors">{extraResults.totalHours.toLocaleString()}</p>
             </div>
-            <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-28 transition-all hover:bg-[#71758c]/30 group">
-              <p className="text-[10px] font-black text-cyan-500 uppercase tracking-wider mb-2 text-center group-hover:text-[#00e5ff] transition-colors">TOTAL MINUTES</p>
-              <p className="text-lg font-black text-cyan-500 text-center tracking-tighter">{extraResults.totalMinutes.toLocaleString()}</p>
+            <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-28 transition-all hover:bg-[#71758c]/30 group cursor-default">
+              <p className="text-[10px] font-black text-[#00e5ff]/60 uppercase tracking-wider mb-2 text-center group-hover:text-yellow-400 transition-colors">TOTAL MINUTES</p>
+              <p className="text-lg font-black text-cyan-500 text-center tracking-tighter group-hover:text-yellow-400 transition-colors">{extraResults.totalMinutes.toLocaleString()}</p>
             </div>
           </div>
-          <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-24 transition-all hover:bg-[#71758c]/30 group">
-            <p className="text-[10px] font-black text-cyan-500 uppercase tracking-wider mb-2 text-center group-hover:text-[#00e5ff] transition-colors">TOTAL SECONDS</p>
-            <p className="text-xl font-black text-cyan-500 text-center tracking-tighter">{extraResults.totalSeconds.toLocaleString()}</p>
+          <div className="bg-[#71758c]/20 p-4 rounded-2xl border border-white/10 flex flex-col justify-center items-center h-24 transition-all hover:bg-[#71758c]/30 group cursor-default">
+            <p className="text-[10px] font-black text-[#00e5ff]/60 uppercase tracking-wider mb-2 text-center group-hover:text-yellow-400 transition-colors">TOTAL SECONDS</p>
+            <p className="text-xl font-black text-cyan-500 text-center tracking-tighter group-hover:text-yellow-400 transition-colors">{extraResults.totalSeconds.toLocaleString()}</p>
           </div>
         </div>
-      )}
+      )
+    }
     </div>
   )
 }
