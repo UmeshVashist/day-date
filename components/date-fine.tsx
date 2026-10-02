@@ -289,9 +289,6 @@ export default function DateFine() {
           }
         }
 
-        const { date: formattedDate, dayName } = formatDateOutput(result)
-        setResultDate(`${formattedDate} (${dayName})`)
-
         // 2. Define range for distribution and counts
         let startRange: Date, endRange: Date
         if (isAddMode) {
@@ -338,6 +335,30 @@ export default function DateFine() {
           current.setDate(current.getDate() + 1)
         }
         setDayCounts(counts)
+
+        // Calculate and set RESULT DATE based on whether days are excluded
+        let finalResultDate: Date
+        if (excludeOption === "all") {
+          finalResultDate = result
+        } else {
+          finalResultDate = new Date(base)
+          if (isAddMode) {
+            if (includeBaseDate) {
+              finalResultDate.setDate(finalResultDate.getDate() - 1 + filteredTotalCount)
+            } else {
+              finalResultDate.setDate(finalResultDate.getDate() + filteredTotalCount)
+            }
+          } else {
+            if (includeBaseDate) {
+              finalResultDate.setDate(finalResultDate.getDate() + 1 - filteredTotalCount)
+            } else {
+              finalResultDate.setDate(finalResultDate.getDate() - filteredTotalCount)
+            }
+          }
+        }
+
+        const { date: formattedDate, dayName } = formatDateOutput(finalResultDate)
+        setResultDate(`${formattedDate} (${dayName})`)
 
         // 5. Calculate date difference for summary cards (Years, Months, Days)
         const calculateDateDiff = (d1: Date, d2: Date) => {
