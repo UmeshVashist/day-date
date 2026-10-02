@@ -136,6 +136,7 @@ const Galaxy = () => {
     const renderer = new THREE.WebGLRenderer({
       canvas: canvas,
       alpha: true, // Make background transparent if needed
+      preserveDrawingBuffer: true,
     })
     renderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))

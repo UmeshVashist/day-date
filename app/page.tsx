@@ -5,17 +5,10 @@ import DayCount from "@/components/day-count"
 import DateFine from "@/components/date-fine"
 import Calendar from "@/components/calendar"
 import DaysConvert from "@/components/days-convert"
-import Calculator from "@/components/calculator"
+import TimeCount from "@/components/time-count"
+import TimeFiend from "@/components/time-fiend"
 import { Button } from "@/components/ui/button"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-
-import { Search, ChevronDown, X } from "lucide-react"
+import { Search, ChevronDown, X, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export default function Home() {
@@ -30,10 +23,11 @@ export default function Home() {
     { value: "day-count", label: "Day Count" },
     { value: "date-fine", label: "Date Fine" },
     { value: "days-convert", label: "Days Convert" },
-    { value: "calculator", label: "Calculator" },
+    { value: "time-count", label: "Time Count" },
+    { value: "time-fiend", label: "Time Fiend" },
   ]
 
-  const filteredCalculators = calculators.filter(calc => 
+  const filteredCalculators = calculators.filter(calc =>
     calc.label.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
@@ -80,7 +74,7 @@ export default function Home() {
     const day = String(date.getDate()).padStart(2, "0")
     const month = String(date.getMonth() + 1).padStart(2, "0")
     const year = date.getFullYear()
-    
+
     let hours = date.getHours()
     const ampm = hours >= 12 ? "PM" : "AM"
     hours = hours % 12
@@ -88,7 +82,7 @@ export default function Home() {
     const hoursStr = String(hours).padStart(2, "0")
     const minutes = String(date.getMinutes()).padStart(2, "0")
     const seconds = String(date.getSeconds()).padStart(2, "0")
-    
+
     return {
       date: `${day}/${month}/${year}`,
       time: `${hoursStr}:${minutes}:${seconds} ${ampm}`
@@ -97,135 +91,180 @@ export default function Home() {
 
   const handleClear = () => {
     setSelectedOption("default")
+    setSearchTerm("")
+    setIsDropdownOpen(false)
   }
-
-  const handleChange = (value: string) => {
-    setSelectedOption(value)
-  }
-
-  // ✅ reusable hover style
-  const _itemStyle =
-    "cursor-pointer hover:bg-blue-500 hover:text-white focus:bg-blue-500 focus:text-white";
 
   return (
-    <div className="min-h-screen py-2 sm:py-4 px-4 flex flex-col items-center">
-      <div className="w-full max-w-6xl">
-        {/* Header - Gradient Text */}
-        <div className="max-w-xl mx-auto">
-          <h1 className="text-xl sm:text-3xl font-black text-center mb-4 sm:mb-6 tracking-tight">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-400 drop-shadow-sm">
-              Day & Date System
-            </span>
-          </h1>
+    <div className="min-h-screen flex flex-col">
+      {/* Top Header */}
+      <header className="sticky top-0 z-50 w-full backdrop-blur-xl bg-[#1e2235]/75 border-b border-white/10 shadow-lg shadow-black/20">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 sm:py-3 flex flex-wrap items-center justify-between gap-3">
 
-          {/* Selector Card - Glass UI */}
-          <div className="backdrop-blur-xl bg-[#33374b]/60 rounded-[1.25rem] shadow-2xl p-4 sm:p-5 mb-6 border border-white/10 relative z-50">
-            <div className="flex flex-col space-y-3">
-              <label className="text-[9px] font-black text-[#00e5ff] tracking-[0.2em] uppercase ml-1 opacity-80">Select Calculator</label>
-              <div className="flex flex-col sm:flex-row gap-2 relative">
-                <div className="relative flex-1 group">
-                  <div className="relative flex items-center">
-                    <input
-                      type="text"
-                      placeholder={selectedOption !== "default" ? calculators.find(c => c.value === selectedOption)?.label : "Search or Select..."}
-                      value={searchTerm}
-                      onChange={(e) => {
-                        setSearchTerm(e.target.value)
-                        setIsDropdownOpen(true)
-                      }}
-                      onFocus={() => setIsDropdownOpen(true)}
-                      onKeyDown={handleKeyDown}
-                      className="w-full bg-[#71758c]/40 backdrop-blur-md border border-white/10 text-white h-10 px-9 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00e5ff]/30 transition-all placeholder:text-white/40 text-xs shadow-inner"
-                    />
-                    <Search className="absolute left-3 h-3.5 w-3.5 text-white/40" />
-                    <div className="absolute right-3 flex items-center gap-1.5">
-                      {searchTerm && (
-                        <button onClick={() => setSearchTerm("")} className="text-red-400 hover:text-red-300 transition-colors">
-                          <X className="h-3.5 w-3.5" />
-                        </button>
-                      )}
-                      <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="text-white/40 hover:text-white transition-colors">
-                        <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-200", isDropdownOpen && "rotate-180")} />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Custom Searchable Dropdown List */}
-                  {isDropdownOpen && (
-                    <div className="absolute top-full left-0 right-0 mt-2 bg-[#33374b] backdrop-blur-2xl border border-white/10 rounded-lg shadow-2xl z-[100] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-                      <div className="max-h-[240px] overflow-y-auto py-1.5">
-                        {filteredCalculators.length > 0 ? (
-                          filteredCalculators.map((calc, index) => (
-                            <div
-                              key={calc.value}
-                              onClick={() => {
-                                setSelectedOption(calc.value)
-                                setSearchTerm("")
-                                setIsDropdownOpen(false)
-                              }}
-                              onMouseEnter={() => setHighlightedIndex(index)}
-                              className={cn(
-                                "px-4 py-2 cursor-pointer transition-all flex items-center gap-3",
-                                index === highlightedIndex ? "bg-white/10 text-[#00e5ff]" : "text-white/70 hover:bg-white/5"
-                              )}
-                            >
-                              <div className={cn("h-1.5 w-1.5 rounded-full transition-all", selectedOption === calc.value ? "bg-[#00e5ff] shadow-[0_0_8px_rgba(0,229,255,0.8)]" : "bg-transparent")} />
-                              <span className="font-bold text-xs">{calc.label}</span>
-                            </div>
-                          ))
-                        ) : (
-                          <div className="px-4 py-6 text-center text-white/30 text-[10px] italic">
-                            No result for "{searchTerm}"
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Global Click Handler to close dropdown */}
-                {isDropdownOpen && (
-                  <div 
-                    className="fixed inset-0 z-40" 
-                    onClick={() => setIsDropdownOpen(false)}
-                  />
-                )}
-                
-                <Button 
-                  onClick={handleClear}
-                  className="bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-400 font-bold py-3 rounded-2xl transition-all border border-yellow-500/20 hover:border-yellow-500/40 cursor-pointer font-black px-5 h-10 rounded-lg transition-all shadow-lg shadow-purple-900/40 relative z-50 text-[10px] tracking-widest uppercase active:scale-95"
-                >
-                  Clear
-                </Button>
-              </div>
-              
-              {/* Real-time Clock */}
-              <div className="text-center pt-1 min-h-[20px]">
-                {mounted && (
-                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-400 drop-shadow-sm">
-                    {formatDateTime(currentTime).date} {formatDateTime(currentTime).time}
-                  </span>
-                )}
+          {/* Header Left: Day & Date System */}
+          <div
+            className="flex items-center gap-2 cursor-pointer select-none group"
+            onClick={() => {
+              setSelectedOption("default")
+              setSearchTerm("")
+              setIsDropdownOpen(false)
+            }}
+            title="Day & Date System - Home"
+          >
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-tr from-fuchsia-500 to-cyan-400 p-[1px] shadow-[0_0_12px_rgba(0,229,255,0.35)] group-hover:shadow-[0_0_18px_rgba(0,229,255,0.6)] transition-all flex items-center justify-center">
+              <div className="w-full h-full bg-[#1e2235] rounded-[7px] flex items-center justify-center">
+                <Sparkles className="h-4 w-4 text-cyan-400 group-hover:rotate-12 transition-transform" />
               </div>
             </div>
+            <h1 className="text-lg sm:text-2xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-400 drop-shadow-sm">
+              Day & Date System
+            </h1>
+          </div>
+
+          {/* Header Right: Clock + Dropdown + Clear */}
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+            {/* Real-time Clock (Desktop/Tablet) */}
+            {mounted && (
+              <div className="hidden lg:flex items-center px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs font-mono">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-400 to-cyan-400 font-semibold">
+                  {formatDateTime(currentTime).date} {formatDateTime(currentTime).time}
+                </span>
+              </div>
+            )}
+
+            {/* Dropdown Selector */}
+            <div className="relative group w-36 min-[420px]:w-44 sm:w-56">
+              <div className="relative flex items-center">
+                <input
+                  type="text"
+                  placeholder={
+                    selectedOption !== "default"
+                      ? calculators.find(c => c.value === selectedOption)?.label
+                      : "Search or Select..."
+                  }
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value)
+                    setIsDropdownOpen(true)
+                  }}
+                  onFocus={() => setIsDropdownOpen(true)}
+                  onKeyDown={handleKeyDown}
+                  className="w-full bg-[#33374b]/80 hover:bg-[#33374b] backdrop-blur-md border border-white/15 text-white h-9 px-7 sm:px-8 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00e5ff]/50 transition-all placeholder:text-white/60 text-xs shadow-inner"
+                />
+                <Search className="absolute left-2 sm:left-2.5 h-3.5 w-3.5 text-white/50" />
+                <div className="absolute right-2 sm:right-2.5 flex items-center gap-1">
+                  {searchTerm && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setSearchTerm("")
+                      }}
+                      className="text-red-400 hover:text-red-300 transition-colors p-0.5"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setIsDropdownOpen(!isDropdownOpen)
+                    }}
+                    className="text-white/50 hover:text-white transition-colors p-0.5"
+                  >
+                    <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-200", isDropdownOpen && "rotate-180")} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Custom Searchable Dropdown List */}
+              {isDropdownOpen && (
+                <div className="absolute top-full right-0 mt-2 w-52 sm:w-60 bg-[#23273a] backdrop-blur-2xl border border-white/15 rounded-xl shadow-2xl z-[100] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                  <div className="max-h-[260px] overflow-y-auto py-1.5 scrollable-dropdown">
+                    {filteredCalculators.length > 0 ? (
+                      filteredCalculators.map((calc, index) => (
+                        <div
+                          key={calc.value}
+                          onClick={() => {
+                            setSelectedOption(calc.value)
+                            setSearchTerm("")
+                            setIsDropdownOpen(false)
+                          }}
+                          onMouseEnter={() => setHighlightedIndex(index)}
+                          className={cn(
+                            "px-3.5 py-2.5 cursor-pointer transition-all flex items-center justify-between text-xs",
+                            index === highlightedIndex ? "bg-white/10 text-[#00e5ff]" : "text-white/80 hover:bg-white/5",
+                            selectedOption === calc.value && "text-[#00e5ff] font-bold bg-[#00e5ff]/10"
+                          )}
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <div className={cn("h-1.5 w-1.5 rounded-full transition-all", selectedOption === calc.value ? "bg-[#00e5ff] shadow-[0_0_8px_rgba(0,229,255,0.8)]" : "bg-transparent")} />
+                            <span>{calc.label}</span>
+                          </div>
+                          {selectedOption === calc.value && (
+                            <span className="text-[9px] uppercase font-bold tracking-wider text-[#00e5ff]/90 bg-[#00e5ff]/20 px-1.5 py-0.5 rounded">Active</span>
+                          )}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="px-4 py-4 text-center text-white/40 text-xs italic">
+                        No option found
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Global Click Handler to close dropdown */}
+            {isDropdownOpen && (
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setIsDropdownOpen(false)}
+              />
+            )}
+
+            {/* Clear Button */}
+            <Button
+              onClick={handleClear}
+              className="bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-400 font-bold px-3 sm:px-4 h-9 rounded-xl transition-all border border-yellow-500/20 hover:border-yellow-500/40 cursor-pointer text-[10px] tracking-widest uppercase active:scale-95 shadow-md shadow-yellow-500/5"
+            >
+              Clear
+            </Button>
           </div>
         </div>
+      </header>
 
-        {/* Content Area */}
-        {selectedOption !== "default" && (
-          <div className={`${(selectedOption === 'day-count' || selectedOption === 'date-fine' || selectedOption === 'calculator') ? 'w-full' : 'backdrop-blur-xl bg-slate-900/40 rounded-[2rem] shadow-2xl p-6 sm:p-8 border border-white/10 max-w-2xl mx-auto'} mb-10 transition-all duration-300`}>
+      {/* Main Content Area */}
+      <main className="flex-1 w-full max-w-6xl mx-auto px-4 py-6 sm:py-8 flex flex-col items-center justify-start">
+        {selectedOption !== "default" ? (
+          <div id="main-content-area" className={`${(selectedOption === 'day-count' || selectedOption === 'date-fine' || selectedOption === 'time-count' || selectedOption === 'time-fiend') ? 'w-full' : 'backdrop-blur-xl bg-slate-900/40 rounded-[2rem] shadow-2xl p-6 sm:p-8 border border-white/10 max-w-2xl mx-auto'} mb-10 transition-all duration-300`}>
             {selectedOption === "day-count" && <DayCount />}
             {selectedOption === "date-fine" && <DateFine />}
             {selectedOption === "days-convert" && <DaysConvert />}
-            {selectedOption === "calculator" && <Calculator />}
+            {selectedOption === "time-count" && <TimeCount />}
+            {selectedOption === "time-fiend" && <TimeFiend />}
             {selectedOption === "calendar" && <Calendar />}
           </div>
+        ) : (
+          /* Subtle view when no option is selected */
+          <div className="my-auto py-12 flex flex-col items-center text-center">
+            {/* Real-time Clock for mobile when not visible in header */}
+            {mounted && (
+              <div className="lg:hidden mb-6 px-4 py-1.5 rounded-full bg-[#1e2235]/60 border border-white/10 backdrop-blur-md text-xs font-mono">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-400 to-cyan-400 font-semibold">
+                  {formatDateTime(currentTime).date} {formatDateTime(currentTime).time}
+                </span>
+              </div>
+            )}
+          </div>
         )}
-      </div>
+      </main>
 
       {/* Version Footer */}
-      <div className="fixed bottom-4 left-4">
-        <span className="bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-400 drop-shadow-sm font-bold text-sm">version 1.6</span>
+      <div className="fixed bottom-4 left-4 z-10 pointer-events-none">
+        <span className="bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-400 drop-shadow-sm font-bold text-sm">version 1.9</span>
       </div>
     </div>
   )

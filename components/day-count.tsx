@@ -491,7 +491,33 @@ export default function DayCount() {
 
         setDayCount(filteredTotalCount)
 
-        const difference = calculateDateDifference(start, end, includeEndDate)
+        let difference: { years: number; months: number; days: number }
+        let remainingDaysAfterYears: number
+
+        if (filteredTotalCount === 0) {
+          difference = { years: 0, months: 0, days: 0 }
+          remainingDaysAfterYears = 0
+        } else if (excludeOption === "all") {
+          difference = calculateDateDifference(start, end, includeEndDate)
+
+          const endForYears = new Date(start)
+          endForYears.setFullYear(start.getFullYear() + difference.years)
+          const diffTimeYears = Math.abs(end.getTime() - endForYears.getTime())
+          remainingDaysAfterYears = Math.floor(diffTimeYears / (1000 * 60 * 60 * 24)) + (includeEndDate ? 1 : 0)
+        } else {
+          // When weekend days or specific days are excluded, calculate Years, Months, and Days
+          // based on the effective counted days (filteredTotalCount) starting from start date
+          const targetEndDate = new Date(start)
+          targetEndDate.setDate(targetEndDate.getDate() + filteredTotalCount)
+
+          difference = calculateDateDifference(start, targetEndDate, false)
+
+          const endForYears = new Date(start)
+          endForYears.setFullYear(start.getFullYear() + difference.years)
+          const diffTimeYears = Math.max(0, targetEndDate.getTime() - endForYears.getTime())
+          remainingDaysAfterYears = Math.floor(diffTimeYears / (1000 * 60 * 60 * 24))
+        }
+
         setDateDifference(difference)
 
         // Calculate extra results based on filtered count
@@ -499,13 +525,7 @@ export default function DayCount() {
         const remainingDaysAfterWeeks = filteredTotalCount % 7
         const totalMonths = (difference.years * 12) + difference.months
         const remainingDaysAfterMonths = difference.days
-        
-        // Calculate remaining days after full years
-        const endForYears = new Date(start)
-        endForYears.setFullYear(start.getFullYear() + difference.years)
-        const diffTimeYears = Math.abs(end.getTime() - endForYears.getTime())
-        const remainingDaysAfterYears = Math.floor(diffTimeYears / (1000 * 60 * 60 * 24)) + (includeEndDate ? 1 : 0)
-        
+
         const totalHours = filteredTotalCount * 24
         const totalMinutes = totalHours * 60
         const totalSeconds = totalMinutes * 60
@@ -797,14 +817,16 @@ export default function DayCount() {
             </div>
           )}
 
-          {/* Clear Button */}
+          {/* Action Buttons */}
           {(startDateDay || startDateMonth || startDateYear || endDateDay || endDateMonth || endDateYear || dayCount !== null) && (
-            <Button
-              onClick={handleClear}
-              className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold py-3 rounded-2xl transition-all border border-red-500/20 hover:border-red-500/40 cursor-pointer uppercase tracking-widest text-xs"
-            >
-              Clear All Fields
-            </Button>
+            <div className="flex gap-3">
+              <Button
+                onClick={handleClear}
+                className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold py-3 rounded-2xl transition-all border border-red-500/20 hover:border-red-500/40 cursor-pointer uppercase tracking-widest text-xs"
+              >
+                Clear All Fields
+              </Button>
+            </div>
           )}
         </div>
       </div>

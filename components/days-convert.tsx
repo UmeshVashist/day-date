@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import React, { useState, useRef } from "react"
 
 export default function DaysConvert() {
   // Input section: 3 day values that user fills
@@ -196,14 +196,16 @@ export default function DaysConvert() {
           </div>
         )}
 
-        {/* Clear Fields Button */}
+        {/* Action Buttons */}
         {(inputDay1 || inputDay2 || inputDay3) && (
-          <button
-            onClick={clearFields}
-            className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold py-4 rounded-2xl transition-all border border-red-500/20 hover:border-red-500/40 cursor-pointer uppercase tracking-widest text-xs mt-4"
-          >
-            Clear All Days
-          </button>
+          <div className="flex gap-3 mt-4">
+            <button
+              onClick={clearFields}
+              className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold py-4 rounded-2xl transition-all border border-red-500/20 hover:border-red-500/40 cursor-pointer uppercase tracking-widest text-xs"
+            >
+              Clear All Days
+            </button>
+          </div>
         )}
       </div>
     </div>

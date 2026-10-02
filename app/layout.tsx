@@ -4,6 +4,7 @@ import { Inter, JetBrains_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import GlassBackground from "@/components/glass-background"
 import Galaxy from "@/components/galaxy"
+import { Toaster } from "@/components/ui/sonner"
 import "./globals.css"
 
 const _inter = Inter({ subsets: ["latin"] })
@@ -13,13 +14,7 @@ export const metadata: Metadata = {
   title: "Day & Date MS",
   description: "Calculate days between dates and add days to dates",
   generator: "Day & Date MS",
-  icons: {
-    icon: [
-      {
-        url: "https://jxechgirxrbrblyrrqmt.supabase.co/storage/v1/object/public/images/bb5b5ced-6b47-425c-aad2-065017342a96/1768574759761-development.png",
-      },
-    ],
-  },
+  icons: "https://jxechgirxrbrblyrrqmt.supabase.co/storage/v1/object/public/images/bb5b5ced-6b47-425c-aad2-065017342a96/1768574759761-development.png",
 }
 
 export default function RootLayout({
@@ -34,6 +29,7 @@ export default function RootLayout({
         <GlassBackground>
           {children}
         </GlassBackground>
+        <Toaster position="top-center" />
         <Analytics />
       </body>
     </html>

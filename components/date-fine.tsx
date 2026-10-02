@@ -373,7 +373,44 @@ export default function DateFine() {
           return { years: y, months: m, days: d }
         }
 
-        const diff = calculateDateDiff(startRange, endRange)
+        let diff: { years: number; months: number; days: number }
+        let remainingDaysAfterYears: number
+
+        if (filteredTotalCount === 0) {
+          diff = { years: 0, months: 0, days: 0 }
+          remainingDaysAfterYears = 0
+        } else if (excludeOption === "all") {
+          diff = calculateDateDiff(startRange, endRange)
+          const startForYears = new Date(startRange)
+          startForYears.setFullYear(startRange.getFullYear() + diff.years)
+          const diffTimeYears = Math.abs(endRange.getTime() - startForYears.getTime())
+          remainingDaysAfterYears = Math.floor(diffTimeYears / (1000 * 60 * 60 * 24)) + (includeBaseDate ? 1 : 0)
+        } else {
+          const targetEndDate = new Date(startRange)
+          targetEndDate.setDate(targetEndDate.getDate() + filteredTotalCount)
+
+          let y = targetEndDate.getFullYear() - startRange.getFullYear()
+          let m = targetEndDate.getMonth() - startRange.getMonth()
+          let d = targetEndDate.getDate() - startRange.getDate()
+
+          if (d < 0) {
+            m--
+            const prevMonth = new Date(targetEndDate.getFullYear(), targetEndDate.getMonth(), 0)
+            d += prevMonth.getDate()
+          }
+          if (m < 0) {
+            y--
+            m += 12
+          }
+
+          diff = { years: y, months: m, days: d }
+
+          const startForYears = new Date(startRange)
+          startForYears.setFullYear(startRange.getFullYear() + diff.years)
+          const diffTimeYears = Math.max(0, targetEndDate.getTime() - startForYears.getTime())
+          remainingDaysAfterYears = Math.floor(diffTimeYears / (1000 * 60 * 60 * 24))
+        }
+
         setDateDifference(diff)
 
         // 6. Calculate summary results based on filtered count
@@ -383,12 +420,7 @@ export default function DateFine() {
         const totalMonthsResult = (diff.years * 12) + diff.months
         const remainingDaysAfterMonths = diff.days
         
-        // Calculate remaining days after full years for the Years summary card
-        const startForYears = new Date(startRange)
-        startForYears.setFullYear(startRange.getFullYear() + diff.years)
-        const diffTimeYears = Math.abs(endRange.getTime() - startForYears.getTime())
-        const remainingDaysAfterYears = Math.floor(diffTimeYears / (1000 * 60 * 60 * 24)) + (includeBaseDate ? 1 : 0)
-        
+
         const totalHours = totalDays * 24
         const totalMinutes = totalHours * 60
         const totalSeconds = totalMinutes * 60
@@ -704,14 +736,16 @@ export default function DateFine() {
             </div>
           )}
 
-          {/* Clear Button */}
+          {/* Action Buttons */}
           {(baseDateDay || baseDateMonth || baseDateYear || yearsToAdd || monthsToAdd || weeksToAdd || daysToAdd || resultDate) && (
-            <Button
-              onClick={handleClear}
-              className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold py-3 rounded-2xl transition-all border border-red-500/20 hover:border-red-500/40 cursor-pointer uppercase tracking-widest text-xs"
-            >
-              Clear All Fields
-            </Button>
+            <div className="flex gap-3">
+              <Button
+                onClick={handleClear}
+                className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold py-3 rounded-2xl transition-all border border-red-500/20 hover:border-red-500/40 cursor-pointer uppercase tracking-widest text-xs"
+              >
+                Clear All Fields
+              </Button>
+            </div>
           )}
         </div>
       </div>
