@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next"
 import GlassBackground from "@/components/glass-background"
 import Galaxy from "@/components/galaxy"
 import { Toaster } from "@/components/ui/sonner"
+import MaintenanceGuard from "@/components/maintenance-guard"
 import "./globals.css"
 
 const _inter = Inter({ subsets: ["latin"] })
@@ -27,7 +28,9 @@ export default function RootLayout({
       <body className={`font-sans antialiased overflow-x-hidden`}>
         <Galaxy />
         <GlassBackground>
-          {children}
+          <MaintenanceGuard>
+            {children}
+          </MaintenanceGuard>
         </GlassBackground>
         <Toaster position="top-center" />
         <Analytics />
