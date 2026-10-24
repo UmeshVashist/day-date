@@ -6,20 +6,14 @@ import {
   Wrench,
   Clock,
   RefreshCw,
-  Lock,
   Sparkles,
   ShieldCheck,
   Cpu,
   Activity,
-  ArrowRight,
-  CheckCircle2,
-  AlertCircle,
   Eye,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
-import { ADMIN_COOKIE_NAME } from "@/lib/maintenance-config"
 
 interface MaintenanceScreenProps {
   title?: string
@@ -42,9 +36,6 @@ export default function MaintenanceScreen({
 }: MaintenanceScreenProps) {
   const mountRef = useRef<HTMLDivElement>(null)
   const [checking, setChecking] = useState(false)
-  const [showAdminModal, setShowAdminModal] = useState(false)
-  const [passcode, setPasscode] = useState("")
-  const [unlocking, setUnlocking] = useState(false)
   const [lastChecked, setLastChecked] = useState<string>("Just now")
   const [progress, setProgress] = useState(88)
 
@@ -292,37 +283,6 @@ export default function MaintenanceScreen({
     }
   }
 
-  // Owner unlock from modal
-  const handleOwnerUnlock = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!passcode.trim()) {
-      toast.error("Please enter admin passcode")
-      return
-    }
-
-    setUnlocking(true)
-    try {
-      const res = await fetch("/api/maintenance", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ passcode: passcode.trim(), validateOnly: true }),
-      })
-
-      if (res.ok) {
-        // Store in localStorage & document.cookie for immediate bypass
-        localStorage.setItem(ADMIN_COOKIE_NAME, "true")
-        document.cookie = `${ADMIN_COOKIE_NAME}=true; path=/; max-age=2592000; SameSite=Lax`
-        toast.success("Admin authorized! Entering system...")
-        window.location.href = "/admin12"
-      } else {
-        toast.error("Invalid passcode. Access denied.")
-      }
-    } catch {
-      toast.error("Authorization check failed.")
-    } finally {
-      setUnlocking(false)
-    }
-  }
 
   return (
     <div className="relative min-h-screen w-full flex flex-col items-center justify-between text-white overflow-hidden bg-slate-950 select-none">
@@ -491,78 +451,8 @@ export default function MaintenanceScreen({
               Contact: {contactInfo}
             </span>
           )}
-
-          {/* Secret Owner Unlock Trigger */}
-          <button
-            onClick={() => setShowAdminModal(true)}
-            className="flex items-center gap-1 text-slate-500 hover:text-cyan-300 transition-colors p-1 rounded"
-            title="Owner / Admin Login"
-          >
-            <Lock className="w-3.5 h-3.5" />
-            <span className="text-[11px]">Owner Access</span>
-          </button>
         </div>
       </footer>
-
-      {/* Admin Unlock Modal */}
-      {showAdminModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-in fade-in duration-200">
-          <div className="w-full max-w-sm p-6 rounded-2xl bg-slate-900 border border-white/15 shadow-2xl relative text-left">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2 font-bold text-white text-base">
-                <Lock className="w-4 h-4 text-cyan-400" />
-                <span>Owner Authentication</span>
-              </div>
-              <button
-                onClick={() => setShowAdminModal(false)}
-                className="text-slate-400 hover:text-white text-sm font-mono"
-              >
-                &times;
-              </button>
-            </div>
-
-            <p className="text-xs text-slate-300 mb-4">
-              Enter admin passcode to bypass maintenance mode or manage system settings at{" "}
-              <span className="text-cyan-400 font-mono">/admin12</span>.
-            </p>
-
-            <form onSubmit={handleOwnerUnlock} className="space-y-4">
-              <div>
-                <label className="text-[11px] font-mono text-slate-400 uppercase">Admin Passcode</label>
-                <Input
-                  type="password"
-                  placeholder="Enter admin passcode"
-                  value={passcode}
-                  onChange={(e) => setPasscode(e.target.value)}
-                  className="mt-1 bg-slate-950 border-white/15 text-white"
-                  autoFocus
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-2 pt-2">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowAdminModal(false)}
-                  className="text-xs text-slate-400 hover:text-white"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  size="sm"
-                  disabled={unlocking}
-                  className="bg-gradient-to-r from-cyan-500 to-fuchsia-600 hover:from-cyan-400 hover:to-fuchsia-500 text-white text-xs font-semibold"
-                >
-                  {unlocking ? "Verifying..." : "Unlock Access"}
-                  <ArrowRight className="w-3.5 h-3.5 ml-1" />
-                </Button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

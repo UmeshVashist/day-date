@@ -380,8 +380,8 @@ export default function AdminPage() {
                     <>
                       All visitors going to{" "}
                       <code className="text-cyan-300 font-mono font-semibold">https://day-date.vercel.app</code>{" "}
-                      will see the <strong className="text-rose-300">Modern 3D Maintenance Screen</strong>.
-                      Only verified owners can bypass and access the live tools.
+                      will see <strong className="text-rose-300">ONLY the Modern 3D Maintenance Screen</strong>.
+                      The live website and calculators are completely hidden.
                     </>
                   ) : (
                     <>
@@ -472,15 +472,15 @@ export default function AdminPage() {
             </Button>
           </div>
 
-          {/* Card 2: Live Website with Bypass */}
+          {/* Card 2: Full Lock Mode */}
           <div className="p-5 rounded-2xl bg-slate-900/70 border border-white/10 flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-2 text-fuchsia-400 font-semibold mb-2">
                 <ShieldCheck className="w-4 h-4" />
-                <span>Admin Bypass Status</span>
+                <span>Full Lock Protection</span>
               </div>
               <p className="text-xs text-slate-400 leading-relaxed">
-                Your browser is currently authorized as Owner. You can access the live homepage even during maintenance.
+                When turned OFF, the entire site is 100% blocked and shows only the 3D screen. No admin banners or paths are leaked.
               </p>
             </div>
             <Link
@@ -488,7 +488,7 @@ export default function AdminPage() {
               target="_blank"
               className="mt-4 w-full inline-flex items-center justify-center h-8 rounded-md bg-fuchsia-500/10 border border-fuchsia-500/30 text-fuchsia-300 hover:bg-fuchsia-500/20 text-xs font-semibold"
             >
-              Open Homepage (Admin View)
+              Open Site (Current View)
             </Link>
           </div>
 
