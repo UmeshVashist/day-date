@@ -688,7 +688,7 @@ export default function AdminPage() {
                 <Input
                   value={config.title}
                   onChange={(e) => setConfig({ ...config, title: e.target.value })}
-                  placeholder="System Maintenance in Progress"
+                  placeholder="This site is under maintenance. Soon back."
                   className="bg-slate-950 border-white/15 text-white"
                 />
               </div>

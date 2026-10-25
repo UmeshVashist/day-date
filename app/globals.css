@@ -215,3 +215,26 @@ input[type="submit"],
 input[type="reset"] {
   cursor: pointer !important;
 }
+
+/* ===================================================== */
+/* 🚀 MAINTENANCE MARQUEE TICKER TAPE */
+/* ===================================================== */
+@keyframes maintenance-marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-maintenance-marquee {
+  display: flex;
+  width: max-content;
+  animation: maintenance-marquee 30s linear infinite;
+  will-change: transform;
+}
+
+.animate-maintenance-marquee:hover {
+  animation-play-state: paused;
+}

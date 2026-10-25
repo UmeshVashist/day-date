@@ -11,7 +11,7 @@ export interface MaintenanceConfig {
 
 export const DEFAULT_MAINTENANCE_CONFIG: MaintenanceConfig = {
   isMaintenance: false, // Default is LIVE
-  title: "System Maintenance in Progress",
+  title: "This site is under maintenance. Soon back.",
   message: "We are currently upgrading Day & Date System with new features and precision improvements. We will be back online shortly!",
   estimatedEndTime: "30-45 Minutes",
   contactInfo: "support@day-date.com",
