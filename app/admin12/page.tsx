@@ -313,7 +313,7 @@ export default function AdminPage() {
             <Button
               type="submit"
               disabled={saving}
-              className="w-full h-11 bg-gradient-to-r from-cyan-500 to-fuchsia-600 hover:from-cyan-400 hover:to-fuchsia-500 text-white font-semibold text-sm shadow-[0_0_20px_rgba(0,229,255,0.3)] transition-all"
+              className="w-full h-11 cursor-pointer bg-gradient-to-r from-cyan-500 to-fuchsia-600 hover:from-cyan-400 hover:to-fuchsia-500 text-white font-semibold text-sm shadow-[0_0_20px_rgba(0,229,255,0.3)] transition-all"
             >
               {saving ? "Authenticating..." : "Enter Admin Panel"}
             </Button>
@@ -366,7 +366,7 @@ export default function AdminPage() {
             <Link
               href="/"
               target="_blank"
-              className="px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-white/10 text-xs font-medium text-slate-200 transition-all flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-xl cursor-pointer bg-slate-800/80 hover:bg-slate-700/80 border border-white/10 text-xs font-medium text-slate-200 transition-all flex items-center gap-1.5"
               title="Open site"
             >
               <span>View Site</span>
@@ -377,7 +377,7 @@ export default function AdminPage() {
               variant="ghost"
               size="sm"
               onClick={handleLogout}
-              className="text-xs text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 flex items-center gap-1"
+              className="text-xs text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 flex items-center gap-1 cursor-pointer"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>Logout</span>
@@ -589,7 +589,7 @@ export default function AdminPage() {
                   type="submit"
                   size="sm"
                   disabled={connectingRedis}
-                  className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs"
+                  className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs cursor-pointer"
                 >
                   {connectingRedis ? "Testing Connection..." : "Test & Connect Redis"}
                 </Button>
@@ -615,7 +615,7 @@ export default function AdminPage() {
               variant="outline"
               size="sm"
               onClick={() => setShowPreview(true)}
-              className="mt-4 w-full bg-cyan-500/10 border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20 text-xs font-semibold"
+              className="mt-4 w-full bg-cyan-500/10 border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20 text-xs font-semibold cursor-pointer"
             >
               Open 3D Live Preview
             </Button>
@@ -635,7 +635,7 @@ export default function AdminPage() {
             <Link
               href="/"
               target="_blank"
-              className="mt-4 w-full inline-flex items-center justify-center h-8 rounded-md bg-fuchsia-500/10 border border-fuchsia-500/30 text-fuchsia-300 hover:bg-fuchsia-500/20 text-xs font-semibold"
+              className="mt-4 w-full inline-flex items-center justify-center h-8 rounded-md bg-fuchsia-500/10 border border-fuchsia-500/30 text-fuchsia-300 hover:bg-fuchsia-500/20 text-xs font-semibold cursor-pointer"
             >
               Open Site (Current View)
             </Link>
@@ -657,7 +657,7 @@ export default function AdminPage() {
               size="sm"
               onClick={loadConfig}
               disabled={loading}
-              className="mt-4 w-full bg-amber-500/10 border-amber-500/30 text-amber-300 hover:bg-amber-500/20 text-xs font-semibold"
+              className="mt-4 w-full bg-amber-500/10 border-amber-500/30 text-amber-300 hover:bg-amber-500/20 text-xs font-semibold cursor-pointer"
             >
               <RefreshCw className={`w-3.5 h-3.5 mr-1.5 ${loading ? "animate-spin" : ""}`} />
               Refresh Status
@@ -735,7 +735,7 @@ export default function AdminPage() {
               <Button
                 type="submit"
                 disabled={saving}
-                className="bg-gradient-to-r from-cyan-500 to-fuchsia-600 hover:from-cyan-400 hover:to-fuchsia-500 text-white font-semibold text-xs px-6 shadow-[0_0_20px_rgba(0,229,255,0.25)] flex items-center gap-2"
+                className="bg-gradient-to-r from-cyan-500 to-fuchsia-600 hover:from-cyan-400 hover:to-fuchsia-500 text-white font-semibold text-xs px-6 shadow-[0_0_20px_rgba(0,229,255,0.25)] flex items-center gap-2 cursor-pointer"
               >
                 <Save className="w-3.5 h-3.5" />
                 {saving ? "Saving Changes..." : "Save Announcement Details"}

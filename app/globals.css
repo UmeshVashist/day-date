@@ -204,3 +204,14 @@
 .scrollbar-style::-webkit-scrollbar-thumb:hover {
   background: rgba(147, 51, 234, 0.9);
 }
+
+/* ===================================================== */
+/* 👆 GLOBAL CURSOR POINTER FOR BUTTONS */
+/* ===================================================== */
+button,
+[role="button"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  cursor: pointer !important;
+}

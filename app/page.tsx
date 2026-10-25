@@ -264,7 +264,7 @@ export default function Home() {
 
       {/* Version Footer */}
       <div className="fixed bottom-4 left-4 z-10 pointer-events-none">
-        <span className="bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-400 drop-shadow-sm font-bold text-sm">version 1.9</span>
+        <span className="bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-cyan-400 drop-shadow-sm font-bold text-sm">version 1.11</span>
       </div>
     </div>
   )
