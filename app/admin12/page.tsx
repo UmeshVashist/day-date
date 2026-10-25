@@ -19,6 +19,9 @@ import {
   AlertTriangle,
   KeyRound,
   LogOut,
+  Database,
+  Check,
+  AlertCircle,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -43,7 +46,17 @@ export default function AdminPage() {
 
   // Maintenance form state
   const [config, setConfig] = useState<MaintenanceConfig>(DEFAULT_MAINTENANCE_CONFIG)
-  const [storageSource, setStorageSource] = useState<string>("local")
+  const [storageSource, setStorageSource] = useState<string>("default")
+  const [redisConnected, setRedisConnected] = useState<boolean>(false)
+  const [hasCredentials, setHasCredentials] = useState<boolean>(false)
+  const [redisEndpoint, setRedisEndpoint] = useState<string | null>(null)
+  const [redisError, setRedisError] = useState<string | null>(null)
+
+  // Direct Redis credentials input state
+  const [customRedisUrl, setCustomRedisUrl] = useState("")
+  const [customRedisToken, setCustomRedisToken] = useState("")
+  const [connectingRedis, setConnectingRedis] = useState(false)
+  const [showRedisCard, setShowRedisCard] = useState(false)
 
   // Check existing session
   useEffect(() => {
@@ -73,6 +86,10 @@ export default function AdminPage() {
         if (data._source) {
           setStorageSource(data._source)
         }
+        setRedisConnected(Boolean(data._redisConnected))
+        setHasCredentials(Boolean(data._hasCredentials))
+        setRedisEndpoint(data._redisEndpoint || null)
+        setRedisError(data._redisError || null)
       }
     } catch {
       toast.error("Failed to load maintenance status")
@@ -125,10 +142,6 @@ export default function AdminPage() {
 
   // Toggle Website Status (ON = Live / Working for users, OFF = Maintenance screen)
   const handleToggleStatus = async () => {
-    // Current isMaintenance: true means website is OFF.
-    // If we toggle:
-    // If website is LIVE (isMaintenance = false), clicking turns it OFF (isMaintenance = true).
-    // If website is OFF (isMaintenance = true), clicking turns it ON (isMaintenance = false).
     const newMaintenanceState = !config.isMaintenance
 
     setToggling(true)
@@ -156,6 +169,7 @@ export default function AdminPage() {
         } else {
           toast.success("Website is now LIVE! All users can access the website normally.")
         }
+        await loadConfig()
       } else {
         toast.error("Failed to update status. Please verify your passcode.")
       }
@@ -191,6 +205,7 @@ export default function AdminPage() {
         const data = await res.json()
         setConfig(data.config)
         toast.success("Maintenance announcement settings saved successfully!")
+        await loadConfig()
       } else {
         toast.error("Failed to save settings.")
       }
@@ -198,6 +213,44 @@ export default function AdminPage() {
       toast.error("Error saving settings.")
     } finally {
       setSaving(false)
+    }
+  }
+
+  // Connect or Test Custom Redis from Dashboard
+  const handleConnectCustomRedis = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!customRedisUrl.trim() || !customRedisToken.trim()) {
+      toast.error("Please enter both Upstash REST URL and Token")
+      return
+    }
+
+    setConnectingRedis(true)
+    try {
+      const activePasscode = passcode.trim() || ADMIN_DEFAULT_PASSCODE
+
+      const res = await fetch("/api/maintenance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          passcode: activePasscode,
+          customRedisUrl: customRedisUrl.trim(),
+          customRedisToken: customRedisToken.trim(),
+          validateOnly: true,
+        }),
+      })
+
+      const data = await res.json()
+      if (res.ok && data.redisConnected) {
+        toast.success("Upstash Redis Connected Successfully! All browsers are now synced.")
+        await loadConfig()
+      } else {
+        toast.error(data.redisError || "Could not connect to Upstash Redis. Check your URL & Token.")
+        await loadConfig()
+      }
+    } catch {
+      toast.error("Network error while connecting to Redis.")
+    } finally {
+      setConnectingRedis(false)
     }
   }
 
@@ -276,6 +329,8 @@ export default function AdminPage() {
     )
   }
 
+  const isRedisActive = storageSource === "redis" || redisConnected
+
   // Master Dashboard Screen
   return (
     <div className="min-h-screen w-full text-white bg-slate-950 flex flex-col justify-between relative overflow-x-hidden selection:bg-cyan-500 selection:text-black">
@@ -312,7 +367,7 @@ export default function AdminPage() {
               href="/"
               target="_blank"
               className="px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-white/10 text-xs font-medium text-slate-200 transition-all flex items-center gap-1.5"
-              title="Open live site with admin bypass"
+              title="Open site"
             >
               <span>View Site</span>
               <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
@@ -392,14 +447,48 @@ export default function AdminPage() {
                   )}
                 </p>
 
-                <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-slate-400 font-mono">
-                  <span className="flex items-center gap-1">
-                    <Server className="w-3.5 h-3.5 text-cyan-400" /> Storage Engine:{" "}
-                    <strong className="text-slate-200 capitalize">{storageSource}</strong>
-                  </span>
-                  <span>&bull;</span>
-                  <span>Updated: {new Date(config.updatedAt).toLocaleTimeString()}</span>
+                {/* Storage Engine Status Badge */}
+                <div className="mt-4 flex flex-wrap items-center gap-3 text-xs font-mono">
+                  <div
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border ${
+                      isRedisActive
+                        ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/30"
+                        : "bg-amber-500/10 text-amber-300 border-amber-500/30"
+                    }`}
+                  >
+                    <Server className="w-3.5 h-3.5 shrink-0" />
+                    <span>
+                      Storage Engine:{" "}
+                      <strong>{isRedisActive ? "Upstash Redis (Global Cloud Sync)" : "Default (Local)"}</strong>
+                    </span>
+                  </div>
+
+                  <span className="text-slate-500">&bull;</span>
+                  <span className="text-slate-400">Updated: {new Date(config.updatedAt).toLocaleTimeString()}</span>
+
+                  {!isRedisActive && (
+                    <button
+                      onClick={() => setShowRedisCard(!showRedisCard)}
+                      className="text-cyan-400 underline underline-offset-2 hover:text-cyan-300 ml-1 cursor-pointer"
+                    >
+                      {showRedisCard ? "Hide Setup" : "Fix Global Sync"}
+                    </button>
+                  )}
                 </div>
+
+                {/* Redis Error or Endpoint Note if present */}
+                {redisError && (
+                  <div className="mt-2 text-[11px] text-rose-300 font-mono flex items-center gap-1 bg-rose-500/10 px-2 py-1 rounded border border-rose-500/20">
+                    <AlertCircle className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                    <span>Redis Error: {redisError}</span>
+                  </div>
+                )}
+                {isRedisActive && redisEndpoint && (
+                  <div className="mt-2 text-[11px] text-emerald-300 font-mono flex items-center gap-1">
+                    <Check className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Connected to: {redisEndpoint}</span>
+                  </div>
+                )}
               </div>
 
               {/* Right Column: Giant Clickable Toggle Button */}
@@ -448,6 +537,66 @@ export default function AdminPage() {
             </div>
           </div>
         </section>
+
+        {/* REDIS CONNECTION CARD (IF NOT YET CONNECTED OR USER CLICKS) */}
+        {(!isRedisActive || showRedisCard) && (
+          <section className="mb-8 p-6 rounded-3xl bg-slate-900/90 border border-cyan-500/30 shadow-2xl animate-in fade-in">
+            <div className="flex items-center gap-2.5 mb-2">
+              <Database className="w-5 h-5 text-cyan-400" />
+              <h3 className="text-base font-bold text-white">
+                Connect Upstash Redis (For Multi-Browser Global Sync)
+              </h3>
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed mb-4">
+              Aap Upstash REST credentials yahan direct enter karke{" "}
+              <strong className="text-cyan-300">"Test & Connect"</strong> kar sakte hain. Isse sabhi browsers, mobiles
+              aur alag-alag users ke beech status instantly 100% sync ho jayega.
+            </p>
+
+            <form onSubmit={handleConnectCustomRedis} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-[11px] font-mono text-slate-300 uppercase tracking-wider block mb-1">
+                    UPSTASH_REDIS_REST_URL
+                  </label>
+                  <Input
+                    placeholder="https://...upstash.io"
+                    value={customRedisUrl}
+                    onChange={(e) => setCustomRedisUrl(e.target.value)}
+                    className="bg-slate-950 border-white/15 text-white font-mono text-xs"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-mono text-slate-300 uppercase tracking-wider block mb-1">
+                    UPSTASH_REDIS_REST_TOKEN
+                  </label>
+                  <Input
+                    type="password"
+                    placeholder="AX... (secret token)"
+                    value={customRedisToken}
+                    onChange={(e) => setCustomRedisToken(e.target.value)}
+                    className="bg-slate-950 border-white/15 text-white font-mono text-xs"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-1">
+                <span className="text-[11px] text-slate-400 font-mono">
+                  Upstash console me REST API section se copy karein
+                </span>
+                <Button
+                  type="submit"
+                  size="sm"
+                  disabled={connectingRedis}
+                  className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs"
+                >
+                  {connectingRedis ? "Testing Connection..." : "Test & Connect Redis"}
+                </Button>
+              </div>
+            </form>
+          </section>
+        )}
 
         {/* SECOND ROW: QUICK ACTIONS & PREVIEWS */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -593,24 +742,6 @@ export default function AdminPage() {
               </Button>
             </div>
           </form>
-        </section>
-
-        {/* INFO NOTICE: GLOBAL VERCEL PERSISTENCE */}
-        <section className="mt-8 p-5 rounded-2xl bg-cyan-950/20 border border-cyan-500/20 text-xs text-slate-300 font-mono">
-          <div className="flex items-start gap-3">
-            <Server className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-            <div>
-              <div className="text-cyan-300 font-bold mb-1">
-                Zero-Config Ready & Multi-Region Cloud Sync:
-              </div>
-              <p className="text-slate-400 leading-relaxed">
-                Maintenance mode is fully operational right now via built-in server storage & cookies.
-                To sync across all international Vercel edge nodes instantly, you can optionally connect a free
-                Upstash Redis instance by adding <code className="text-cyan-300">UPSTASH_REDIS_REST_URL</code> and{" "}
-                <code className="text-cyan-300">UPSTASH_REDIS_REST_TOKEN</code> in your Vercel Project Environment Variables.
-              </p>
-            </div>
-          </div>
         </section>
       </main>
 

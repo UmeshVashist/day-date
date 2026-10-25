@@ -20,10 +20,11 @@ export default function MaintenanceGuard({ children }: MaintenanceGuardProps) {
   // Fetch status from API
   const fetchStatus = useCallback(async () => {
     try {
-      const res = await fetch("/api/maintenance", {
+      const res = await fetch(`/api/maintenance?_t=${Date.now()}`, {
         cache: "no-store",
         headers: {
-          "Cache-Control": "no-cache",
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          Pragma: "no-cache",
         },
       })
       if (res.ok) {

@@ -9,125 +9,227 @@ import {
   MAINTENANCE_COOKIE_NAME,
 } from "@/lib/maintenance-config"
 
-// Temporary file location for Next.js serverless execution
-const TMP_FILE_PATH = path.join(process.platform === "win32" ? process.cwd() : "/tmp", "daydate_maintenance.json")
+// Next.js App Router dynamic configuration:
+// Disables ALL caching so state updates instantly across all Vercel edge instances and browsers
+export const dynamic = "force-dynamic"
+export const dynamicParams = true
+export const revalidate = 0
+export const fetchCache = "force-no-store"
 
-// Global in-memory fallback for hot serverless instances
+const REDIS_KEY = "daydate_maintenance_config"
+
+// Temporary file location for local development or fallback
+const TMP_FILE_PATH = path.join(
+  process.platform === "win32" ? process.cwd() : "/tmp",
+  "daydate_maintenance.json"
+)
+
+// In-memory fallback
 declare global {
   // eslint-disable-next-line no-var
   var __daydate_maintenance_state: MaintenanceConfig | undefined
+  // eslint-disable-next-line no-var
+  var __daydate_custom_redis: { url: string; token: string } | undefined
 }
 
 /**
- * Read configuration from Upstash / Vercel KV if available,
- * otherwise fall back to local file and memory cache.
+ * Clean & extract Redis credentials from environment or runtime
  */
-async function getStoredConfig(): Promise<{ config: MaintenanceConfig; source: string }> {
-  // 1. Try Upstash Redis REST / Vercel KV REST
-  const redisUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL
-  const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN
+function getRedisCredentials() {
+  const custom = globalThis.__daydate_custom_redis
 
-  if (redisUrl && redisToken) {
+  const rawUrl =
+    custom?.url ||
+    process.env.UPSTASH_REDIS_REST_URL ||
+    process.env.KV_REST_API_URL ||
+    process.env.NEXT_PUBLIC_UPSTASH_REDIS_REST_URL ||
+    process.env.REDIS_URL ||
+    ""
+
+  const rawToken =
+    custom?.token ||
+    process.env.UPSTASH_REDIS_REST_TOKEN ||
+    process.env.KV_REST_API_TOKEN ||
+    process.env.NEXT_PUBLIC_UPSTASH_REDIS_REST_TOKEN ||
+    process.env.REDIS_TOKEN ||
+    ""
+
+  let url = rawUrl.trim().replace(/^["']|["']$/g, "")
+  const token = rawToken.trim().replace(/^["']|["']$/g, "")
+
+  // Ensure url has https:// protocol
+  if (url && !url.startsWith("http://") && !url.startsWith("https://")) {
+    url = `https://${url}`
+  }
+
+  // Remove trailing slashes
+  url = url.replace(/\/+$/, "")
+
+  return { url, token, hasCredentials: Boolean(url && token) }
+}
+
+interface StoredConfigResult {
+  config: MaintenanceConfig
+  source: "redis" | "memory" | "file" | "default"
+  redisConnected: boolean
+  redisError?: string
+}
+
+/**
+ * Read configuration from Upstash Redis REST
+ */
+async function getStoredConfig(): Promise<StoredConfigResult> {
+  const { url: redisUrl, token: redisToken, hasCredentials } = getRedisCredentials()
+
+  if (hasCredentials) {
     try {
-      const res = await fetch(`${redisUrl}/get/daydate_maintenance_config`, {
+      // Upstash REST API command endpoint: POST / with ["GET", key]
+      const res = await fetch(redisUrl, {
+        method: "POST",
         headers: {
           Authorization: `Bearer ${redisToken}`,
+          "Content-Type": "application/json",
         },
+        body: JSON.stringify(["GET", REDIS_KEY]),
         cache: "no-store",
       })
+
       if (res.ok) {
         const data = await res.json()
-        if (data && data.result) {
+        if (data && data.result !== null && data.result !== undefined) {
           const parsed = typeof data.result === "string" ? JSON.parse(data.result) : data.result
           return {
             config: { ...DEFAULT_MAINTENANCE_CONFIG, ...parsed },
             source: "redis",
+            redisConnected: true,
           }
         }
+        // If key doesn't exist yet in Redis, Redis connection was successful!
+        return {
+          config: DEFAULT_MAINTENANCE_CONFIG,
+          source: "redis",
+          redisConnected: true,
+        }
+      } else {
+        const errorText = await res.text()
+        console.warn(`Upstash Redis error (${res.status}):`, errorText)
+        return {
+          config: globalThis.__daydate_maintenance_state || DEFAULT_MAINTENANCE_CONFIG,
+          source: "default",
+          redisConnected: false,
+          redisError: `HTTP ${res.status}: ${errorText.slice(0, 120)}`,
+        }
       }
-    } catch (err) {
-      console.warn("Failed reading from Redis KV, falling back to local file:", err)
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : String(err)
+      console.warn("Failed fetching from Upstash Redis:", errMsg)
+      return {
+        config: globalThis.__daydate_maintenance_state || DEFAULT_MAINTENANCE_CONFIG,
+        source: "default",
+        redisConnected: false,
+        redisError: errMsg,
+      }
     }
   }
 
-  // 2. Try in-memory cache
+  // Fallback 1: Memory
   if (globalThis.__daydate_maintenance_state) {
     return {
       config: globalThis.__daydate_maintenance_state,
       source: "memory",
+      redisConnected: false,
     }
   }
 
-  // 3. Try filesystem (/tmp or project folder)
+  // Fallback 2: Filesystem
   try {
     if (fs.existsSync(TMP_FILE_PATH)) {
       const content = fs.readFileSync(TMP_FILE_PATH, "utf-8")
       const parsed = JSON.parse(content)
       const config = { ...DEFAULT_MAINTENANCE_CONFIG, ...parsed }
       globalThis.__daydate_maintenance_state = config
-      return { config, source: "file" }
+      return { config, source: "file", redisConnected: false }
     }
   } catch (err) {
     console.warn("Failed reading maintenance file:", err)
   }
 
-  // 4. Default state
-  return { config: DEFAULT_MAINTENANCE_CONFIG, source: "default" }
+  // Fallback 3: Default
+  return {
+    config: DEFAULT_MAINTENANCE_CONFIG,
+    source: "default",
+    redisConnected: false,
+  }
 }
 
 /**
- * Save configuration to Redis, file, and in-memory cache.
+ * Save configuration to Redis & local cache
  */
-async function saveConfig(config: MaintenanceConfig): Promise<{ success: boolean; redisSaved: boolean }> {
+async function saveConfig(config: MaintenanceConfig): Promise<{ success: boolean; redisSaved: boolean; redisError?: string }> {
+  const { url: redisUrl, token: redisToken, hasCredentials } = getRedisCredentials()
   let redisSaved = false
+  let redisError: string | undefined
 
-  // 1. Upstash Redis / Vercel KV REST
-  const redisUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL
-  const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN
-
-  if (redisUrl && redisToken) {
+  if (hasCredentials) {
     try {
-      const res = await fetch(`${redisUrl}/set/daydate_maintenance_config`, {
+      // Upstash REST API command endpoint: POST / with ["SET", key, value]
+      const res = await fetch(redisUrl, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${redisToken}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(JSON.stringify(config)),
+        body: JSON.stringify(["SET", REDIS_KEY, JSON.stringify(config)]),
+        cache: "no-store",
       })
+
       if (res.ok) {
-        redisSaved = true
+        const data = await res.json()
+        if (data && (data.result === "OK" || data.result)) {
+          redisSaved = true
+        }
+      } else {
+        const errorText = await res.text()
+        redisError = `HTTP ${res.status}: ${errorText.slice(0, 100)}`
+        console.error("Upstash Redis SET failed:", redisError)
       }
-    } catch (err) {
-      console.warn("Failed writing to Redis KV:", err)
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : String(err)
+      redisError = errMsg
+      console.error("Upstash Redis SET exception:", errMsg)
     }
   }
 
-  // 2. Memory
+  // Memory
   globalThis.__daydate_maintenance_state = config
 
-  // 3. Filesystem
+  // Filesystem
   try {
     fs.writeFileSync(TMP_FILE_PATH, JSON.stringify(config, null, 2), "utf-8")
   } catch (err) {
-    console.warn("Failed writing maintenance file to disk:", err)
+    console.warn("Failed writing local file:", err)
   }
 
-  return { success: true, redisSaved }
+  return { success: true, redisSaved, redisError }
 }
 
 export async function GET() {
-  const { config, source } = await getStoredConfig()
+  const { config, source, redisConnected, redisError } = await getStoredConfig()
+  const { hasCredentials, url } = getRedisCredentials()
 
   return NextResponse.json(
     {
       ...config,
       _source: source,
+      _redisConnected: redisConnected,
+      _hasCredentials: hasCredentials,
+      _redisEndpoint: url ? url.replace(/^https?:\/\//, "").slice(0, 25) + "..." : null,
+      _redisError: redisError || null,
     },
     {
       status: 200,
       headers: {
-        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0, s-maxage=0",
         Pragma: "no-cache",
         Expires: "0",
       },
@@ -146,6 +248,8 @@ export async function POST(request: Request) {
       contactInfo,
       passcode,
       validateOnly,
+      customRedisUrl,
+      customRedisToken,
     } = body
 
     const expectedPasscode = process.env.ADMIN_SECRET_KEY || ADMIN_DEFAULT_PASSCODE
@@ -158,9 +262,23 @@ export async function POST(request: Request) {
       )
     }
 
-    // If only verifying passcode
+    // If setting custom Redis credentials from admin panel
+    if (customRedisUrl && customRedisToken) {
+      globalThis.__daydate_custom_redis = {
+        url: String(customRedisUrl).trim(),
+        token: String(customRedisToken).trim(),
+      }
+    }
+
+    // If only verifying passcode / testing Redis
     if (validateOnly) {
-      const response = NextResponse.json({ success: true, authorized: true })
+      const { redisConnected, redisError } = await getStoredConfig()
+      const response = NextResponse.json({
+        success: true,
+        authorized: true,
+        redisConnected,
+        redisError: redisError || null,
+      })
       response.cookies.set(ADMIN_COOKIE_NAME, "true", {
         path: "/",
         maxAge: 60 * 60 * 24 * 30, // 30 days
@@ -182,12 +300,13 @@ export async function POST(request: Request) {
       updatedBy: "Owner via /admin12",
     }
 
-    const { redisSaved } = await saveConfig(updatedConfig)
+    const { redisSaved, redisError } = await saveConfig(updatedConfig)
 
     const response = NextResponse.json({
       success: true,
       config: updatedConfig,
       redisSaved,
+      redisError: redisError || null,
       message: updatedConfig.isMaintenance
         ? "Maintenance Mode ACTIVATED. Regular visitors will see the 3D Maintenance Screen."
         : "Website is now LIVE and working for all users.",
